@@ -42,7 +42,7 @@ function inferActive(r: ToolbarClient.ToolbarResponse<any>, location: History.Lo
 }
 
 
-export default function ToolbarRenderer(p: { location?: ToolbarLocation; }): React.ReactElement | null {
+export default function ToolbarRenderer(p: { location?: ToolbarLocation, sideMenuVisibleFunc?: (a: boolean) => void | undefined }): React.ReactElement | null {
   const response = useAPI(() => ToolbarClient.API.getCurrentToolbar(p.location!), [p.location]);
   const responseRef = useUpdatedRef(response);
   const [expanded, setExpanded] = React.useState<ToolbarClient.ToolbarResponse<any>[]>([]);
@@ -76,12 +76,17 @@ export default function ToolbarRenderer(p: { location?: ToolbarLocation; }): Rea
       </div>
     );
   }
-  else
+  else {
+
+    if (p.location == "Side" && p.sideMenuVisibleFunc)
+      p.sideMenuVisibleFunc(response?.elements && response?.elements?.length > 0 ? true : false);
+
     return (
       <div className="nav">
         {response.elements && response.elements.flatMap(sr => renderDropdownItem(sr, 0, false, response)).map((sr, i) => withKey(sr, i))}
       </div>
     );
+  }
 
 
   function renderNavItem(res: ToolbarClient.ToolbarResponse<any>, index: number) {
@@ -100,7 +105,7 @@ export default function ToolbarRenderer(p: { location?: ToolbarLocation; }): Rea
           var icon = getIcon(res);
           return (
             <NavDropdown id={"button" + index} title={!icon ? title : (<span>{icon}{title}</span>)}>
-                {res.elements && res.elements.flatMap(sr => renderDropdownItem(sr, 0, true, res)).map((sr, i) => withKey(sr, i))}
+              {res.elements && res.elements.flatMap(sr => renderDropdownItem(sr, 0, true, res)).map((sr, i) => withKey(sr, i))}
             </NavDropdown>
           );
         }
