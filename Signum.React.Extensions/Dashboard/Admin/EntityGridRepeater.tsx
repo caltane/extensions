@@ -74,7 +74,7 @@ export const EntityGridRepeater = React.forwardRef(function EntityGridRepeater(p
       <div className={drag?.dragMode == "move" ? "sf-dragging" : undefined} onDrop={handleOnDrop}>
         {
           c.getMListItemContext<ModifiableEntity & IGridEntity>(p.ctx)
-            .groupBy(ctx => ctx.value.row.toString())
+            .groupBy(ctx => ctx.value.row?.toString())
             .orderBy(gr => parseInt(gr.key))
             .flatMap((gr, i, groups) => [
               renderSeparator(parseInt(gr.key)),
