@@ -25,6 +25,8 @@ namespace Signum.Engine.Files
                     {
                         Entity = a,
                         a.Id,
+                        a.FileName,
+                        a.FileType,
                         a.AlgorithmType,
                         a.Action,
                         a.User,

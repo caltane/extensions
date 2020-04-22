@@ -54,14 +54,16 @@ export const FileLoggerEntity = new Type<FileLoggerEntity>("FileLogger");
 export interface FileLoggerEntity extends Entities.Entity {
   Type: "FileLogger";
   algorithmType: string;
-  file: IFilePath;
+  fileName: string;
+  fullPhysicalPath: string;
+  fileType: FileTypeSymbol;
   action: FileLoggerActionType;
   user: Entities.Lite<Basics.IUserEntity>;
   date: string;
 }
 
 export module FileLoggerPermission {
-  export const TrackSession : Authorization.PermissionSymbol = registerSymbol("Permission", "FileLoggerPermission.TrackSession");
+  export const TrackDownload : Authorization.PermissionSymbol = registerSymbol("Permission", "FileLoggerPermission.TrackDownload");
 }
 
 export module FileMessage {
