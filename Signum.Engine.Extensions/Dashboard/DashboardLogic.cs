@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Packaging;
 using Signum.Engine.Authorization;
 using Signum.Engine.Basics;
 using Signum.Engine.DynamicQuery;
@@ -34,6 +35,7 @@ namespace Signum.Engine.Dashboard
 
                 UserAssetsImporter.PartNames.AddRange(new Dictionary<string, Type>
                 {
+                    {"ImagePart", typeof(ImagePartEntity)},
                     {"UserChartPart", typeof(UserChartPartEntity)},
                     {"UserQueryPart", typeof(UserQueryPartEntity)},
                     {"LinkListPart", typeof(LinkListPartEntity)},
@@ -249,6 +251,9 @@ namespace Signum.Engine.Dashboard
 
             TypeConditionLogic.Register<UserQueryPartEntity>(typeCondition,
                 uqp => Database.Query<DashboardEntity>().WhereCondition(typeCondition).Any(cp => cp.ContainsContent(uqp)));
+
+            TypeConditionLogic.Register<ImagePartEntity>(typeCondition,
+                 cscp => Database.Query<DashboardEntity>().WhereCondition(typeCondition).Any(cp => cp.ContainsContent(cscp)));
         }
     }
 }

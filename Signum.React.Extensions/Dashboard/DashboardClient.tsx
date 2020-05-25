@@ -13,7 +13,7 @@ import * as AuthClient from '../Authorization/AuthClient'
 import * as ChartClient from '../Chart/ChartClient'
 import * as UserChartClient from '../Chart/UserChart/UserChartClient'
 import * as UserQueryClient from '../UserQueries/UserQueryClient'
-import { DashboardPermission, DashboardEntity, ValueUserQueryListPartEntity, LinkListPartEntity, UserChartPartEntity, UserQueryPartEntity, IPartEntity, DashboardMessage, PanelPartEmbedded } from './Signum.Entities.Dashboard'
+import { DashboardPermission, DashboardEntity, ValueUserQueryListPartEntity, LinkListPartEntity, UserChartPartEntity, UserQueryPartEntity, IPartEntity, DashboardMessage, PanelPartEmbedded, ImagePartEntity } from './Signum.Entities.Dashboard'
 import * as UserAssetClient from '../UserAssets/UserAssetClient'
 import { ImportRoute } from "@framework/AsyncImport";
 import { useAPI } from '../../../Framework/Signum.React/Scripts/Hooks';
@@ -55,6 +55,7 @@ export function start(options: { routes: JSX.Element[] }) {
   Navigator.addSettings(new EntitySettings(LinkListPartEntity, e => import('./Admin/LinkListPart')));
   Navigator.addSettings(new EntitySettings(UserChartPartEntity, e => import('./Admin/UserChartPart')));
   Navigator.addSettings(new EntitySettings(UserQueryPartEntity, e => import('./Admin/UserQueryPart')));
+  Navigator.addSettings(new EntitySettings(ImagePartEntity, e => import('./Admin/ImagePartAdmin')));
 
   Finder.addSettings({ queryName: DashboardEntity, defaultOrderColumn: DashboardEntity.token(d => d.dashboardPriority), defaultOrderType: "Descending" });
 
@@ -67,6 +68,11 @@ export function start(options: { routes: JSX.Element[] }) {
   registerRenderer(LinkListPartEntity, {
     component: () => import('./View/LinkListPart').then(a => a.default),
     defaultIcon: () => ({ icon: ["far", "list-alt"], iconColor: "forestgreen" })
+  });
+  registerRenderer(ImagePartEntity, {
+    component: () => import('./View/ImagePartView').then(a => a.default),
+    defaultIcon: () => ({ icon: ["far", "list-alt"], iconColor: "forestgreen" }),
+    withPanel: () => false
   });
   registerRenderer(UserChartPartEntity, {
     component: () => import('./View/UserChartPart').then(a => a.default),
@@ -90,7 +96,7 @@ export function start(options: { routes: JSX.Element[] }) {
   registerRenderer(UserQueryPartEntity, {
     component: () => import('./View/UserQueryPart').then((a: any) => a.default),
     defaultIcon: () => ({ icon: ["far", "list-alt"], iconColor: "dodgerblue" }),
-    withPanel: p => p.renderMode != "BigValue",
+    withPanel: p => p.renderMode.indexOf("BigValue") == -1,
     handleEditClick: !Navigator.isViewable(UserQueryPartEntity) || Navigator.isReadOnly(UserQueryPartEntity) ? undefined :
       (p, e, ev) => {
         ev.preventDefault();

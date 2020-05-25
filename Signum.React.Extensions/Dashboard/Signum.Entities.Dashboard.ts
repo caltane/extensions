@@ -51,6 +51,13 @@ export module DashboardPermission {
   export const ViewDashboard : Authorization.PermissionSymbol = registerSymbol("Permission", "DashboardPermission.ViewDashboard");
 }
 
+export const ImagePartEntity = new Type<ImagePartEntity>("ImagePart");
+export interface ImagePartEntity extends Entities.Entity, IPartEntity {
+  Type: "ImagePart";
+  imageSrcContent: string;
+  requiresTitle: boolean;
+}
+
 export interface IPartEntity extends Entities.Entity {
   requiresTitle: boolean;
 }
@@ -115,7 +122,8 @@ export interface UserQueryPartEntity extends Entities.Entity, IPartEntity {
 export const UserQueryPartRenderMode = new EnumType<UserQueryPartRenderMode>("UserQueryPartRenderMode");
 export type UserQueryPartRenderMode =
   "SearchControl" |
-  "BigValue";
+  "BigValue" |
+  "BigValueWithoutNumber";
 
 export const ValueUserQueryElementEmbedded = new Type<ValueUserQueryElementEmbedded>("ValueUserQueryElementEmbedded");
 export interface ValueUserQueryElementEmbedded extends Entities.EmbeddedEntity {

@@ -138,6 +138,38 @@ namespace Signum.Entities.Dashboard
     }
 
     [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
+    public class ImagePartEntity : Entity, IPartEntity
+    {
+        [StringLengthValidator(Max = int.MaxValue)]
+        public string ImageSrcContent { get; set; }
+
+        public override string ToString() => "Panel de imágen ";
+
+        public bool RequiresTitle => false;
+
+        public IPartEntity Clone()
+        {
+            return new ImagePartEntity
+            {
+                ImageSrcContent = this.ImageSrcContent,
+            };
+        }
+
+        public XElement ToXml(IToXmlContext ctx)
+        {
+            return new XElement("UserQueryPart",
+                new XAttribute("ImageSrcContent", ImageSrcContent)
+                );
+        }
+
+        public void FromXml(XElement element, IFromXmlContext ctx)
+        {
+            ImageSrcContent = element.Attribute("ImageSrcContent")?.Value ?? "";
+        }
+    }
+
+
+    [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
     public class UserQueryPartEntity : Entity, IPartEntity
     {
         public UserQueryEntity UserQuery { get; set; }
@@ -190,6 +222,7 @@ namespace Signum.Entities.Dashboard
     {
         SearchControl,
         BigValue,
+        BigValueWithoutNumber
     }
 
     [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
