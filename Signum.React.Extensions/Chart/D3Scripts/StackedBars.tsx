@@ -156,7 +156,8 @@ export default function renderStackedBars({ data, width, height, parameters, loa
           parameters["Labels"] == "Inside" ?
             <g className="y-axis-tick-label" transform={translate(xRule.start('content'), yRule.start('content') + y.bandwidth() / 2)}>
               {keyValues.map((k, i) => {
-                var maxValue = stackedSeries[stackedSeries.length - 1][i][1];
+                var values = stackedSeries[stackedSeries.length - 1][i];
+                var maxValue = values && values.length == 2 ? values[1] : 0;
                 var posx = x(maxValue);
                 return (<TextEllipsis key={keyColumn.getKey(k)}
                   transform={translate(posx >= size / 2 ? 0 : posx, y(keyColumn.getKey(k))!)}
