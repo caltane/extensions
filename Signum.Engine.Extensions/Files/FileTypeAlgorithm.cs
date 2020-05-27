@@ -1,3 +1,4 @@
+using Signum.Entities.Basics;
 using Signum.Entities.Files;
 using Signum.Utilities;
 using System;
@@ -68,6 +69,7 @@ namespace Signum.Engine.Files
                     Directory.CreateDirectory(path);
                 File.WriteAllBytes(fp.FullPhysicalPath(), fp.BinaryFile);
                 fp.BinaryFile = null!;
+                ToLogger(fp, FileLoggerActionType.Write);
             }
             catch (IOException ex)
             {
@@ -80,12 +82,14 @@ namespace Signum.Engine.Files
 
         public virtual Stream OpenRead(IFilePath path)
         {
-            return File.OpenRead(path.FullPhysicalPath());
+            try { return File.OpenRead(path.FullPhysicalPath()); }
+            finally { ToLogger(path, FileLoggerActionType.Read); }
         }
 
         public virtual byte[] ReadAllBytes(IFilePath path)
         {
-            return File.ReadAllBytes(path.FullPhysicalPath());
+            try { return File.ReadAllBytes(path.FullPhysicalPath()); }
+            finally { ToLogger(path, FileLoggerActionType.Read); }
         }
 
         public virtual void MoveFile(IFilePath ofp, IFilePath fp)
@@ -94,6 +98,7 @@ namespace Signum.Engine.Files
                 return;
 
             System.IO.File.Move(ofp.FullPhysicalPath(), fp.FullPhysicalPath());
+            ToLogger(fp, FileLoggerActionType.Move);
         }
 
         public virtual void DeleteFiles(IEnumerable<IFilePath> files)
@@ -104,12 +109,18 @@ namespace Signum.Engine.Files
             foreach (var f in files)
             {
                 File.Delete(f.FullPhysicalPath());
+                ToLogger(f, FileLoggerActionType.Delete);
             }
         }
 
         PrefixPair IFileTypeAlgorithm.GetPrefixPair(IFilePath efp)
         {
             return this.GetPrefixPair(efp);
+        }
+
+        public void ToLogger(IFilePath fp, FileLoggerActionType action)
+        {
+            FileLoggerLogic.OnLogger(this, fp, action);
         }
     }
 
