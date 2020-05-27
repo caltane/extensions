@@ -1,6 +1,7 @@
 
 using Azure;
 using Azure.Storage.Blobs;
+using Signum.Entities.Basics;
 using Signum.Entities.Files;
 using Signum.Utilities;
 using System;
@@ -122,6 +123,11 @@ namespace Signum.Engine.Files
             {
                 client.DeleteBlob(f.Suffix);
             }
+        }
+
+        public void ToLogger(IFilePath fp, FileLoggerActionType action)
+        {
+            throw new NotImplementedException();
         }
     }
 

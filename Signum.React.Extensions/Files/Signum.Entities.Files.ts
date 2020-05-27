@@ -4,7 +4,9 @@
 
 import { MessageKey, QueryKey, Type, EnumType, registerSymbol } from '../../../Framework/Signum.React/Scripts/Reflection'
 import * as Entities from '../../../Framework/Signum.React/Scripts/Signum.Entities'
+import * as Basics from '../../../Framework/Signum.React/Scripts/Signum.Entities.Basics'
 import * as Patterns from '../../../Framework/Signum.React/Scripts/Signum.Entities.Patterns'
+import * as Authorization from '../Authorization/Signum.Entities.Authorization'
 
 export interface IFile
 {
@@ -39,6 +41,29 @@ export interface FileEntity extends Entities.ImmutableEntity {
   fileName: string;
   hash: string;
   binaryFile: string;
+}
+
+export const FileLoggerActionType = new EnumType<FileLoggerActionType>("FileLoggerActionType");
+export type FileLoggerActionType =
+  "Read" |
+  "Write" |
+  "Move" |
+  "Delete";
+
+export const FileLoggerEntity = new Type<FileLoggerEntity>("FileLogger");
+export interface FileLoggerEntity extends Entities.Entity {
+  Type: "FileLogger";
+  algorithmType: string;
+  fileName: string;
+  fullPhysicalPath: string;
+  fileType: FileTypeSymbol;
+  action: FileLoggerActionType;
+  user: Entities.Lite<Basics.IUserEntity>;
+  date: string;
+}
+
+export module FileLoggerPermission {
+  export const TrackDownload : Authorization.PermissionSymbol = registerSymbol("Permission", "FileLoggerPermission.TrackDownload");
 }
 
 export module FileMessage {
