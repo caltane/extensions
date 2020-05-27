@@ -3,6 +3,7 @@ using System.IO;
 using Signum.Utilities;
 using System.Linq.Expressions;
 using Signum.Entities.Patterns;
+using Signum.Services;
 
 namespace Signum.Entities.Files
 {
@@ -58,9 +59,14 @@ namespace Signum.Entities.Files
             set
             {
                 if (Set(ref binaryFile, value) && binaryFile != null)
+                {
                     FileLength = binaryFile.Length;
+                    Hash = CryptorEngine.CalculateMD5Hash(binaryFile);
+                }
             }
         }
+
+        public string? Hash { get; private set; }
 
         public int FileLength { get; internal set; }
 
@@ -123,7 +129,7 @@ namespace Signum.Entities.Files
             return "{0} - {1}".FormatWith(FileName, ((long)FileLength).ToComputerSize(true));
         }
 
-        protected override void PostRetrieving()
+        protected override void PostRetrieving(PostRetrievingContext ctx)
         {
             if (CalculatePrefixPair == null)
                 throw new InvalidOperationException("OnCalculatePrefixPair not set");
@@ -138,7 +144,7 @@ namespace Signum.Entities.Files
         string? physicalPrefix;
         public string PhysicalPrefix => physicalPrefix ?? throw new InvalidOperationException("No PhysicalPrefix defined");
 
-        public string WebPrefix { get; set; }
+        public string? WebPrefix { get; set; }
 
         private PrefixPair()
         {

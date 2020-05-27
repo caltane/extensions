@@ -29,11 +29,10 @@ export function start(options: { routes: JSX.Element[], couldHaveAlerts?: (typeN
     parentToken: AlertEntity.token(e => e.target),
     parentValue: ctx.lite
   }, {
-      isVisible: AuthClient.navigatorIsViewable(AlertEntity) && couldHaveAlerts(ctx.lite.EntityType),
-      icon: "bell",
-      iconColor: "orange",
-      isShy: true
-    }));
+    isVisible: Navigator.isViewable(AlertEntity) && couldHaveAlerts(ctx.lite.EntityType),
+    icon: "bell",
+    iconColor: "orange",
+  }));
 
   Operations.addSettings(new EntityOperationSettings(AlertOperation.Attend, {
     alternatives: eoc => [andClose(eoc)],

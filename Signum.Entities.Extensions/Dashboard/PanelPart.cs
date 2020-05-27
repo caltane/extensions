@@ -227,15 +227,51 @@ namespace Signum.Entities.Dashboard
         BigValueWithoutNumber
     }
 
+
+    [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
+    public class UserTreePartEntity : Entity, IPartEntity
+    {
+        public UserQueryEntity UserQuery { get; set; }
+
+        [AutoExpressionField]
+        public override string ToString() => As.Expression(() => UserQuery + "");
+
+        public bool RequiresTitle
+        {
+            get { return false; }
+        }
+
+        public IPartEntity Clone()
+        {
+            return new UserTreePartEntity
+            {
+                UserQuery = this.UserQuery,
+            };
+        }
+
+        public XElement ToXml(IToXmlContext ctx)
+        {
+            return new XElement("UserTreePart",
+                new XAttribute("UserQuery", ctx.Include(UserQuery))
+                );
+        }
+
+        public void FromXml(XElement element, IFromXmlContext ctx)
+        {
+            UserQuery = (UserQueryEntity)ctx.GetEntity(Guid.Parse(element.Attribute("UserQuery").Value));
+        }
+    }
+
     [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
     public class UserChartPartEntity : Entity, IPartEntity
-    {
-        
+    {   
         public UserChartEntity UserChart { get; set; }
 
         public bool ShowData { get; set; } = false;
 
         public bool AllowChangeShowData { get; set; } = false;
+
+        public bool CreateNew { get; set; } = false;
 
         [AutoExpressionField]
         public override string ToString() => As.Expression(() => UserChart + "");
@@ -260,6 +296,7 @@ namespace Signum.Entities.Dashboard
             return new XElement("UserChartPart",
                 new XAttribute("ShowData", ShowData),
                 new XAttribute("AllowChangeShowData", AllowChangeShowData),
+                CreateNew ? new XAttribute("CreateNew", CreateNew) : null,
                 new XAttribute("UserChart", ctx.Include(UserChart)));
         }
 
@@ -267,6 +304,7 @@ namespace Signum.Entities.Dashboard
         {
             ShowData = element.Attribute("ShowData")?.Value.ToBool() ?? false;
             AllowChangeShowData = element.Attribute("AllowChangeShowData")?.Value.ToBool() ?? false;
+            CreateNew = element.Attribute("CreateNew")?.Value.ToBool() ?? false;
             UserChart = (UserChartEntity)ctx.GetEntity(Guid.Parse(element.Attribute("UserChart").Value));
         }
     }

@@ -91,6 +91,7 @@ export interface FilePathEmbedded extends Entities.EmbeddedEntity {
   Type: "FilePathEmbedded";
   fileName: string;
   binaryFile: string;
+  hash: string | null;
   fileLength: number;
   suffix: string;
   calculatedDirectory: string | null;
@@ -103,6 +104,7 @@ export interface FilePathEntity extends Patterns.LockableEntity {
   creationDate: string;
   fileName: string;
   binaryFile: string;
+  hash: string | null;
   fileLength: number;
   suffix: string;
   calculatedDirectory: string | null;
