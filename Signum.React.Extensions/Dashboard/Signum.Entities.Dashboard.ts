@@ -55,6 +55,7 @@ export const ImagePartEntity = new Type<ImagePartEntity>("ImagePart");
 export interface ImagePartEntity extends Entities.Entity, IPartEntity {
   Type: "ImagePart";
   imageSrcContent: string;
+  clickActionURL: string | null;
   requiresTitle: boolean;
 }
 

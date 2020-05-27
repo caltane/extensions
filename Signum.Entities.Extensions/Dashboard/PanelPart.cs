@@ -143,7 +143,9 @@ namespace Signum.Entities.Dashboard
         [StringLengthValidator(Max = int.MaxValue)]
         public string ImageSrcContent { get; set; }
 
-        public override string ToString() => "Panel de imágen ";
+        public string? ClickActionURL { get; set; }
+
+        public override string ToString() => "Panel de imágen";
 
         public bool RequiresTitle => false;
 
@@ -152,19 +154,22 @@ namespace Signum.Entities.Dashboard
             return new ImagePartEntity
             {
                 ImageSrcContent = this.ImageSrcContent,
+                ClickActionURL = this.ClickActionURL,
             };
         }
 
         public XElement ToXml(IToXmlContext ctx)
         {
             return new XElement("UserQueryPart",
-                new XAttribute("ImageSrcContent", ImageSrcContent)
+                new XAttribute("ImageSrcContent", ImageSrcContent),
+                new XAttribute("ClickActionURL", ClickActionURL)
                 );
         }
 
         public void FromXml(XElement element, IFromXmlContext ctx)
         {
             ImageSrcContent = element.Attribute("ImageSrcContent")?.Value ?? "";
+            ClickActionURL = element.Attribute("ClickActionURL")?.Value;
         }
     }
 
