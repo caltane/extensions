@@ -1,4 +1,5 @@
 using Signum.Entities.Basics;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Signum.Entities.Files;
 using Signum.Utilities;
 using System;
@@ -110,6 +111,20 @@ namespace Signum.Engine.Files
             {
                 File.Delete(f.FullPhysicalPath());
                 ToLogger(f, FileLoggerActionType.Delete);
+            }
+        }
+
+        public virtual void DeleteFilesIfExist(IEnumerable<IFilePath> files)
+        {
+            if (WeakFileReference)
+                return;
+
+            foreach (var f in files)
+            {
+                string path = f.FullPhysicalPath();
+                
+                if(File.Exists(path))
+                    File.Delete(path);
             }
         }
 
