@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Packaging;
 using Signum.Engine.Authorization;
 using Signum.Engine.Basics;
 using Signum.Engine.DynamicQuery;
@@ -34,6 +35,7 @@ namespace Signum.Engine.Dashboard
 
                 UserAssetsImporter.PartNames.AddRange(new Dictionary<string, Type>
                 {
+                    {"ImagePart", typeof(ImagePartEntity)},
                     {"UserChartPart", typeof(UserChartPartEntity)},
                     {"UserQueryPart", typeof(UserQueryPartEntity)},
                     {"LinkListPart", typeof(LinkListPartEntity)},
@@ -166,19 +168,25 @@ namespace Signum.Engine.Dashboard
             return result;
         }
 
-        public static DashboardEntity? GetEmbeddedDashboard(Type entityType)
+        public static List<DashboardEntity> GetEmbeddedDashboards(Type entityType)
         {
             var isAllowed = Schema.Current.GetInMemoryFilter<DashboardEntity>(userInterface: false);
 
             var result = DashboardsByType.Value.TryGetC(entityType).EmptyIfNull().Select(lite => Dashboards.Value.GetOrThrow(lite))
                 .Where(d => d.EmbeddedInEntity.Value != DashboardEmbedededInEntity.None && isAllowed(d))
-                .OrderByDescending(a => a.DashboardPriority).FirstOrDefault();
+                .OrderByDescending(a => a.DashboardPriority)
+                .ToList();
 
-            if (result == null)
-                return null;
-
-            using (ViewLogLogic.LogView(result.ToLite(), "GetEmbeddedDashboard"))
+            if (!result.Any())
                 return result;
+
+            foreach (var item in result)
+            {
+                using (ViewLogLogic.LogView(item.ToLite(), "GetEmbeddedDashboards"))
+                {
+                } 
+            }
+            return result;
         }
 
         public static List<Lite<DashboardEntity>> GetDashboards()
@@ -249,6 +257,9 @@ namespace Signum.Engine.Dashboard
 
             TypeConditionLogic.Register<UserQueryPartEntity>(typeCondition,
                 uqp => Database.Query<DashboardEntity>().WhereCondition(typeCondition).Any(cp => cp.ContainsContent(uqp)));
+
+            TypeConditionLogic.Register<ImagePartEntity>(typeCondition,
+                 cscp => Database.Query<DashboardEntity>().WhereCondition(typeCondition).Any(cp => cp.ContainsContent(cscp)));
         }
     }
 }

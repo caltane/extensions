@@ -25,6 +25,7 @@
   <Type Name="BasicPermission" />
   <Type Name="BpmnEntityPairEmbedded" />
   <Type Name="CachePermission" />
+  <Type Name="CalendarDayEntity" />
   <Type Name="CaseActivityEntity" />
   <Type Name="CaseActivityExecutedTimerEntity" />
   <Type Name="CaseActivityMessage" />
@@ -103,6 +104,7 @@
   <Type Name="DynamicExpressionEntity" />
   <Type Name="DynamicExpressionOperation" />
   <Type Name="DynamicExpressionTranslation" />
+  <Type Name="DynamicIsolationMixin" />
   <Type Name="DynamicMixinConnectionEntity" />
   <Type Name="DynamicMixinConnectionOperation" />
   <Type Name="DynamicPanelPermission" />
@@ -151,6 +153,8 @@
   <Type Name="EmailReceptionMixin" />
   <Type Name="EmailRecipientEmbedded" />
   <Type Name="EmailRecipientKind" />
+  <Type Name="EmailSenderConfigurationEntity" />
+  <Type Name="EmailSenderConfigurationOperation" />
   <Type Name="EmailTemplateContactEmbedded" />
   <Type Name="EmailTemplateEntity" />
   <Type Name="EmailTemplateMessage" />
@@ -162,8 +166,10 @@
   <Type Name="EvalEmbedded`1" />
   <Type Name="ExcelAttachmentEntity" />
   <Type Name="ExcelMessage" />
+  <Type Name="ExcelPermission" />
   <Type Name="ExcelReportEntity" />
   <Type Name="ExcelReportOperation" />
+  <Type Name="ExchangeWebServiceEmbedded" />
   <Type Name="FileEmbedded" />
   <Type Name="FileEntity" />
   <Type Name="FileMessage" />
@@ -199,6 +205,7 @@
   <Type Name="IsolationMessage" />
   <Type Name="IsolationMixin" />
   <Type Name="IsolationOperation" />
+  <Type Name="IsolationStrategy" />
   <Type Name="ITaskEntity" />
   <Type Name="ITaskMessage" />
   <Type Name="ITaskOperation" />
@@ -218,6 +225,7 @@
   <Type Name="LinkElementEmbedded" />
   <Type Name="LinkListPartEntity" />
   <Type Name="LoadMethodLogEntity" />
+  <Type Name="LoginAuthMessage" />
   <Type Name="MapMessage" />
   <Type Name="MapPermission" />
   <Type Name="MergeStrategy" />
@@ -245,6 +253,7 @@
   <Type Name="NoteTypeEntity" />
   <Type Name="NoteTypeOperation" />
   <Type Name="OmniboxMessage" />
+  <Type Name="OmniboxPermission" />
   <Type Name="OperationAllowed" />
   <Type Name="OperationAllowedRule" />
   <Type Name="OperationHelpEmbedded" />
@@ -376,8 +385,7 @@
   <Type Name="SMSTemplateMessageEmbedded" />
   <Type Name="SMSTemplateOperation" />
   <Type Name="SMSUpdatePackageEntity" />
-  <Type Name="SmtpConfigurationEntity" />
-  <Type Name="SmtpConfigurationOperation" />
+  <Type Name="SmtpEmbedded" />
   <Type Name="SmtpNetworkDeliveryEmbedded" />
   <Type Name="SqlMigrationEntity" />
   <Type Name="SubEntitiesEval" />
@@ -434,13 +442,12 @@
   <Type Name="UserQueryPermission" />
   <Type Name="UserState" />
   <Type Name="UserTicketEntity" />
+  <Type Name="UserTreePartEntity" />
   <Type Name="ValueUserQueryElementEmbedded" />
   <Type Name="ValueUserQueryListPartEntity" />
   <Type Name="ViewLogEntity" />
   <Type Name="ViewLogMessage" />
   <Type Name="ViewNamePropEmbedded" />
-  <Type Name="WebDownload" />
-  <Type Name="WebImage" />
   <Type Name="WordAttachmentEntity" />
   <Type Name="WordConverterSymbol" />
   <Type Name="WordModelEntity" />

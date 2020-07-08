@@ -14,7 +14,7 @@ import { KeyCodes } from '@framework/Components';
 
 export default function renderBubbleplot({ data, width, height, parameters, loading, onDrillDown, initialLoad }: ChartClient.ChartScriptProps): React.ReactElement<any> {
 
-  var xRule = new Rule({
+  var xRule = Rule.create({
     _1: 5,
     title: 15,
     _2: 5,
@@ -26,7 +26,7 @@ export default function renderBubbleplot({ data, width, height, parameters, load
   }, width);
   //xRule.debugX(chart)
 
-  var yRule = new Rule({
+  var yRule = Rule.create({
     _1: 5,
     content: '*',
     ticks: 4,
@@ -88,7 +88,7 @@ export default function renderBubbleplot({ data, width, height, parameters, load
           className="shape-serie sf-transition"
           transform={translate(x(horizontalColumn.getValue(r)), -y(verticalColumn.getValue(r))) + (initialLoad ? scale(0, 0) : scale(1, 1))}
           cursor="pointer"
-          onClick={e => onDrillDown(r)}
+          onClick={e => onDrillDown(r, e)}
         >
           <circle className="shape sf-transition"
             stroke={colorKeyColumn.getValueColor(r) ?? color(r)}

@@ -5,12 +5,12 @@ import { ajaxPost, ajaxGet, ValidationError } from '@framework/Services';
 import { SearchControl, ValueSearchControlLine } from '@framework/Search'
 import * as Finder from '@framework/Finder'
 import { EntitySettings } from '@framework/Navigator'
+import * as AppContext from '@framework/AppContext'
 import * as Navigator from '@framework/Navigator'
 import MessageModal from '@framework/Modals/MessageModal'
 import { EntityData, EntityKind, symbolNiceName } from '@framework/Reflection'
 import { EntityOperationSettings } from '@framework/Operations'
 import * as Operations from '@framework/Operations'
-import * as EntityOperations from '@framework/Operations/EntityOperations'
 import { NormalControlMessage } from '@framework/Signum.Entities'
 import * as QuickLink from '@framework/QuickLinks'
 import { DynamicTypeEntity, DynamicMixinConnectionEntity, DynamicTypeOperation, DynamicSqlMigrationEntity, DynamicRenameEntity, DynamicTypeMessage, DynamicPanelPermission, DynamicApiEntity } from './Signum.Entities.Dynamic'
@@ -33,7 +33,7 @@ export function start(options: { routes: JSX.Element[] }) {
       (eoc.frame.entityComponent as DynamicTypeComponent).beforeSave();
 
       Operations.API.executeEntity(eoc.entity, eoc.operationInfo.key)
-        .then(pack => { eoc.frame.onReload(pack); EntityOperations.notifySuccess(); })
+        .then(pack => { eoc.frame.onReload(pack); Operations.notifySuccess(); })
         .then(() => {
           if (AuthClient.isPermissionAuthorized(DynamicPanelPermission.ViewDynamicPanel)) {
             MessageModal.show({
@@ -44,7 +44,7 @@ export function start(options: { routes: JSX.Element[] }) {
               icon: "success"
             }).then(result => {
               if (result == "yes")
-                window.open(Navigator.toAbsoluteUrl("~/dynamic/panel"));
+                window.open(AppContext.toAbsoluteUrl("~/dynamic/panel"));
             }).done();
           }
         })
@@ -55,7 +55,7 @@ export function start(options: { routes: JSX.Element[] }) {
   }));
 
   QuickLink.registerQuickLink(DynamicTypeEntity, ctx => new QuickLink.QuickLinkLink("ViewDynamicPanel",
-    symbolNiceName(DynamicPanelPermission.ViewDynamicPanel), "~/dynamic/panel", {
+    () => symbolNiceName(DynamicPanelPermission.ViewDynamicPanel), "~/dynamic/panel", {
       isVisible: AuthClient.isPermissionAuthorized(DynamicPanelPermission.ViewDynamicPanel),
       icon: "arrows-alt",
       iconColor: "purple",

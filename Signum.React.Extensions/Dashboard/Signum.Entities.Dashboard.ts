@@ -15,7 +15,8 @@ export const DashboardEmbedededInEntity = new EnumType<DashboardEmbedededInEntit
 export type DashboardEmbedededInEntity =
   "None" |
   "Top" |
-  "Bottom";
+  "Bottom" |
+  "Tab";
 
 export const DashboardEntity = new Type<DashboardEntity>("Dashboard");
 export interface DashboardEntity extends Entities.Entity, UserAssets.IUserAssetEntity {
@@ -49,6 +50,14 @@ export module DashboardOperation {
 
 export module DashboardPermission {
   export const ViewDashboard : Authorization.PermissionSymbol = registerSymbol("Permission", "DashboardPermission.ViewDashboard");
+}
+
+export const ImagePartEntity = new Type<ImagePartEntity>("ImagePart");
+export interface ImagePartEntity extends Entities.Entity, IPartEntity {
+  Type: "ImagePart";
+  imageSrcContent: string;
+  clickActionURL: string | null;
+  requiresTitle: boolean;
 }
 
 export interface IPartEntity extends Entities.Entity {
@@ -99,6 +108,7 @@ export interface UserChartPartEntity extends Entities.Entity, IPartEntity {
   userChart: Chart.UserChartEntity;
   showData: boolean;
   allowChangeShowData: boolean;
+  createNew: boolean;
   requiresTitle: boolean;
 }
 
@@ -115,7 +125,15 @@ export interface UserQueryPartEntity extends Entities.Entity, IPartEntity {
 export const UserQueryPartRenderMode = new EnumType<UserQueryPartRenderMode>("UserQueryPartRenderMode");
 export type UserQueryPartRenderMode =
   "SearchControl" |
-  "BigValue";
+  "BigValue" |
+  "BigValueWithoutNumber";
+
+export const UserTreePartEntity = new Type<UserTreePartEntity>("UserTreePart");
+export interface UserTreePartEntity extends Entities.Entity, IPartEntity {
+  Type: "UserTreePart";
+  userQuery: UserQueries.UserQueryEntity;
+  requiresTitle: boolean;
+}
 
 export const ValueUserQueryElementEmbedded = new Type<ValueUserQueryElementEmbedded>("ValueUserQueryElementEmbedded");
 export interface ValueUserQueryElementEmbedded extends Entities.EmbeddedEntity {

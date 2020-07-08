@@ -32,7 +32,7 @@ namespace Signum.Engine.Files
         {
             if (sb.NotDefined(MethodInfo.GetCurrentMethod()))
             {
-                SymbolLogic<FileTypeSymbol>.Start(sb,() => FileTypes.Keys.ToHashSet());
+                SymbolLogic<FileTypeSymbol>.Start(sb, () => FileTypes.Keys.ToHashSet());
                 sb.Include<FileTypeSymbol>()
                     .WithQuery(() => f => new
                     {
@@ -55,10 +55,13 @@ namespace Signum.Engine.Files
         void SaveFile(IFilePath fp);
         void ValidateFile(IFilePath fp);
         void DeleteFiles(IEnumerable<IFilePath> files);
+        void DeleteFilesIfExist(IEnumerable<IFilePath> files);
         byte[] ReadAllBytes(IFilePath fp);
         Stream OpenRead(IFilePath fp);
         void MoveFile(IFilePath ofp, IFilePath nfp);
         PrefixPair GetPrefixPair(IFilePath efp);
+
+        void ToLogger(IFilePath fp, FileLoggerActionType action);
     }
 
     public static class SuffixGenerators

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Link } from 'react-router-dom';
 import { ajaxGet } from '@framework/Services';
 import { EntitySettings } from '@framework/Navigator'
+import * as AppContext from '@framework/AppContext'
 import * as Navigator from '@framework/Navigator'
 import * as Finder from '@framework/Finder'
 import { Lite, Entity } from '@framework/Signum.Entities'
@@ -9,11 +10,11 @@ import { OperationLogEntity } from '@framework/Signum.Entities.Basics'
 import * as QuickLinks from '@framework/QuickLinks'
 import { TimeMachineMessage, TimeMachinePermission } from './Signum.Entities.DiffLog';
 import { ImportRoute } from '@framework/AsyncImport';
-import { getTypeInfo } from '@framework/Reflection';
+import { getTypeInfo, getTypeInfos } from '@framework/Reflection';
 import { EntityLink, SearchControl } from '@framework/Search';
 import { liteKey } from '@framework/Signum.Entities';
 import { EntityControlMessage } from '@framework/Signum.Entities';
-import { getTypeInfos } from '@framework/Reflection';
+import { tryGetTypeInfos } from '@framework/Reflection';
 import { CellFormatter } from '@framework/Finder';
 import { TypeReference } from '@framework/Reflection';
 import { isPermissionAuthorized } from '../Authorization/AuthClient';
@@ -25,11 +26,10 @@ export function start(options: { routes: JSX.Element[], timeMachine: boolean }) 
   if (options.timeMachine) {
     QuickLinks.registerGlobalQuickLink(ctx => getTypeInfo(ctx.lite.EntityType).isSystemVersioned && isPermissionAuthorized(TimeMachinePermission.ShowTimeMachine) ?
       new QuickLinks.QuickLinkLink("TimeMachine",
-        TimeMachineMessage.TimeMachine.niceToString(),
+        () => TimeMachineMessage.TimeMachine.niceToString(),
         timeMachineRoute(ctx.lite), {
           icon: "history",
           iconColor: "blue",
-          isShy: true,
         }) : undefined);
 
     SearchControlOptions.showSystemTimeButton = sc => isPermissionAuthorized(TimeMachinePermission.ShowTimeMachine);
@@ -39,12 +39,13 @@ export function start(options: { routes: JSX.Element[], timeMachine: boolean }) 
     Finder.entityFormatRules.push(
       {
         name: "ViewHistory",
-        isApplicable: (row, sc) => sc != null && sc.props.findOptions.systemTime != null && isSystemVersioned(sc.props.queryDescription.columns["Entity"].type),
-        formatter: (row, columns, sc) => !row.entity || !Navigator.isNavigable(row.entity.EntityType, undefined, true) ? undefined :
+        isApplicable: (sc) => sc != null && sc.props.findOptions.systemTime != null && isSystemVersioned(sc.props.queryDescription.columns["Entity"].type),
+        formatter: new Finder.EntityFormatter((row, columns, sc) => !row.entity || !Navigator.isNavigable(row.entity.EntityType, { isSearch: true }) ? undefined :
           <TimeMachineLink lite={row.entity}
             inSearch={true}>
             {EntityControlMessage.View.niceToString()}
           </TimeMachineLink>
+        )
       });
 
     Finder.formatRules.push(
@@ -106,11 +107,11 @@ export default function TimeMachineLink(p : TimeMachineLinkProps){
 
     event.preventDefault();
 
-    window.open(Navigator.toAbsoluteUrl(timeMachineRoute(lite)));
+    window.open(AppContext.toAbsoluteUrl(timeMachineRoute(lite)));
   }
   const { lite, inSearch, children, ...htmlAtts } = p;
 
-  if (!Navigator.isNavigable(lite.EntityType, undefined, p.inSearch || false))
+  if (!Navigator.isNavigable(lite.EntityType, { isSearch: p.inSearch }))
     return <span data-entity={liteKey(lite)}>{p.children ?? lite.toStr}</span>;
 
 

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { classes } from '@framework/Globals'
 import { StyleContext } from '@framework/TypeContext'
 import * as Finder from '@framework/Finder'
+import * as AppContext from '@framework/AppContext'
 import * as Navigator from '@framework/Navigator'
 import { WebApiHttpError } from '@framework/Services'
 import { ValueSearchControl, FindOptions, ValueSearchControlLine } from '@framework/Search'
@@ -40,7 +41,7 @@ export default function DynamicPanelPage(p: DynamicPanelProps) {
 
 
   function handleSelect(key: any /*string*/) {
-    Navigator.history.push("~/dynamic/panel?step=" + key);
+    AppContext.history.push("~/dynamic/panel?step=" + key);
   }
 
   function handleErrorClick(e: React.MouseEvent<any>) {
@@ -56,11 +57,16 @@ export default function DynamicPanelPage(p: DynamicPanelProps) {
   return (
     <div>
       <h2>Dynamic Panel</h2>
-      {startErrors?.length && !restarting &&
-        <div role="alert" className="alert alert-danger" style={{ marginTop: "20px" }}>
-          <FontAwesomeIcon icon="exclamation-triangle" />
-          {" "}The server started, but there {startErrors.length > 1 ? "are" : "is"} <a href="#" onClick={handleErrorClick}>{startErrors.length} {startErrors.length > 1 ? "errors" : "error"}</a>.
-                    </div>
+      {restarting ? undefined :
+        startErrors?.length ?
+          <div role="alert" className="alert alert-danger" style={{ marginTop: "20px" }}>
+            <FontAwesomeIcon icon="exclamation-triangle" />
+            {" "}The server started, but there {startErrors.length > 1 ? "are" : "is"} <a href="#" onClick={handleErrorClick}>{startErrors.length} {startErrors.length > 1 ? "errors" : "error"}</a>.
+        </div> :
+          <div role="alert" className="alert alert-success">
+            <FontAwesomeIcon icon="check-circle" />
+            {" "}The server is started successfully.
+        </div>
       }
       <Tabs activeKey={step ?? "search"} id="dynamicPanelTabs" style={{ marginTop: "20px" }} onSelect={handleSelect}>
         <Tab eventKey="search" title="Search">

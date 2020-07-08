@@ -2,12 +2,12 @@ import * as React from 'react'
 import * as QueryString from 'query-string'
 import { ajaxPost, ajaxGet } from '@framework/Services';
 import { EntitySettings } from '@framework/Navigator'
+import * as AppContext from '@framework/AppContext'
 import * as Navigator from '@framework/Navigator'
 import * as Finder from '@framework/Finder'
 import { EntityOperationSettings } from '@framework/Operations'
 import * as Operations from '@framework/Operations'
-import * as EntityOperations from '@framework/Operations/EntityOperations'
-import { Type } from '@framework/Reflection'
+import { Type, tryGetTypeInfo } from '@framework/Reflection'
 import { Lite } from '@framework/Signum.Entities'
 import { TreeEntity, TreeOperation, MoveTreeModel, TreeMessage } from './Signum.Entities.Tree'
 import TreeModal from './TreeModal'
@@ -36,14 +36,14 @@ export function start(options: { routes: JSX.Element[] }) {
     new EntityOperationSettings(TreeOperation.Copy, {
       onClick: ctx => copyModal(toLite(ctx.entity)).then(m => {
         if (m) {
-          ctx.onConstructFromSuccess = pack => EntityOperations.notifySuccess();
+          ctx.onConstructFromSuccess = pack => Operations.notifySuccess();
           ctx.defaultClick(m);
         }
       }),
       contextual: {
         onClick: ctx => copyModal(ctx.context.lites[0]).then(m => {
           if (m) {
-            ctx.onConstructFromSuccess = pack => EntityOperations.notifySuccess();
+            ctx.onConstructFromSuccess = pack => Operations.notifySuccess();
             ctx.defaultContextualClick(m);
           }
         })
@@ -52,9 +52,9 @@ export function start(options: { routes: JSX.Element[] }) {
   );
 
   Finder.ButtonBarQuery.onButtonBarElements.push(ctx => {
-    var ti = getTypeInfo(ctx.findOptions.queryKey);
+    var ti = tryGetTypeInfo(ctx.findOptions.queryKey);
 
-    if (!ctx.searchControl.props.showBarExtension || ti == null || !isTree(ti))
+    if (!ctx.searchControl.props.showBarExtension || !ti || !isTree(ti))
       return undefined;
 
     return { button: <TreeButton searchControl={ctx.searchControl} /> };
@@ -94,7 +94,7 @@ export function treePath(typeName: string, filterOptions?: FilterOption[]): stri
   if (filterOptions)
     Finder.Encoder.encodeFilters(query, filterOptions);
 
-  return Navigator.history.createHref({ pathname: "~/tree/" + typeName, search: QueryString.stringify(query) });
+  return AppContext.history.createHref({ pathname: "~/tree/" + typeName, search: QueryString.stringify(query) });
 }
 
 export function hideSiblingsAndIsDisabled(ti: TypeInfo) {
@@ -142,7 +142,7 @@ export function overrideAutocomplete(ti: TypeInfo) {
   var es = getEntitySetting(ti.name);
 
   if (!es.autocomplete)
-    es.autocomplete = new LiteAutocompleteConfig((ac, str) => API.findTreeLiteLikeByName(ti.name, str, 5, ac), false, false);
+    es.autocomplete = new LiteAutocompleteConfig((ac, str) => API.findTreeLiteLikeByName(ti.name, str, 5, ac));
 
   if (!es.autocompleteDelay)
     es.autocompleteDelay = 750;

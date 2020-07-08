@@ -338,7 +338,7 @@ namespace Signum.Engine.Word
                                 var renderer = new WordTemplateRenderer(document, qd, template.Culture.ToCultureInfo(), template, model, entity, parsedFileName);
 
                                 p.Switch("MakeQuery");
-                                renderer.MakeQuery();
+                                renderer.ExecuteQuery();
 
                                 p.Switch("RenderNodes");
                                 renderer.RenderNodes(); Dump(document, "3.Replaced.txt");
@@ -574,7 +574,7 @@ namespace Signum.Engine.Word
             return result;
         }
 
-        public static void GenerateWordTemplates()
+        public static void GenerateDefaultTemplates()
         {
             var wordModels = Database.Query<WordModelEntity>().Where(se => !se.WordTemplates().Any()).ToList();
 
