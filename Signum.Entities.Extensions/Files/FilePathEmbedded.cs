@@ -3,6 +3,7 @@ using Signum.Utilities;
 using System.IO;
 using System.Linq.Expressions;
 using Signum.Services;
+using Signum.Entities;
 
 namespace Signum.Entities.Files
 {
@@ -46,6 +47,15 @@ namespace Signum.Entities.Files
                 Set(ref fileName, value);
             }
         }
+
+        [Ignore]
+        public PrimaryKey EntityId;
+        [Ignore]
+        public PrimaryKey? MListRowId;
+        [Ignore]
+        public string PropertyRoute;
+        [Ignore]
+        public string RootType;
 
         [Ignore]
         byte[] binaryFile;
@@ -123,10 +133,8 @@ namespace Signum.Entities.Files
             return result;
         }
 
-        public override string ToString()
-        {
-            return "{0} - {1}".FormatWith(FileName, ((long)FileLength).ToComputerSize(true));
-        }
+        [AutoExpressionField]
+        public override string ToString() => As.Expression(() => $"{FileName} - {((long)FileLength).ToComputerSize(true)}");
 
         public static Action<FilePathEmbedded> OnPreSaving;
         protected override void PreSaving(PreSavingContext ctx)

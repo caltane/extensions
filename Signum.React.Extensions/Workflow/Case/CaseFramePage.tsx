@@ -20,7 +20,7 @@ import "@framework/Frames/Frames.css"
 import "./CaseAct.css"
 import { AutoFocus } from '@framework/Components/AutoFocus';
 import * as AuthClient from '../../Authorization/AuthClient'
-import { FunctionalAdapter } from '../../../../Framework/Signum.React/Scripts/Modals'
+import { FunctionalAdapter } from '@framework/Modals'
 
 interface CaseFramePageProps extends RouteComponentProps<{ workflowId: string; mainEntityStrategy: string; caseActivityId?: string }> {
 }
@@ -169,7 +169,7 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
       <div className="normal-control">
         {this.renderTitle()}
         <CaseFromSenderInfo current={pack.activity} />
-        {!pack.activity.case.isNew && <div className="inline-tags"> <InlineCaseTags case={toLite(pack.activity.case)} /></div>}
+        {!pack.activity.case.isNew && <div className="inline-tags"> <InlineCaseTags case={toLite(pack.activity.case)} avoidHideIcon={true} /></div>}
         <div className="sf-main-control" data-test-ticks={new Date().valueOf()} data-activity-entity={entityInfo(pack.activity)}>
           {this.renderMainEntity()}
         </div>

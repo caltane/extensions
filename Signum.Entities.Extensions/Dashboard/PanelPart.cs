@@ -187,6 +187,8 @@ namespace Signum.Entities.Dashboard
 
         public bool ShowFooter { get; set; }
 
+        public bool CreateNew { get; set; } = false;
+
         [AutoExpressionField]
         public override string ToString() => As.Expression(() => UserQuery + "");
 
@@ -203,6 +205,7 @@ namespace Signum.Entities.Dashboard
                 RenderMode = this.RenderMode,
                 AllowSelection = this.AllowSelection,
                 ShowFooter = this.ShowFooter,
+                CreateNew = this.CreateNew,
             };
         }
 
@@ -212,7 +215,8 @@ namespace Signum.Entities.Dashboard
                 new XAttribute("UserQuery", ctx.Include(UserQuery)),
                 new XAttribute("RenderMode", RenderMode.ToString()),
                 new XAttribute("AllowSelection", AllowSelection.ToString()),
-                new XAttribute("ShowFooter", ShowFooter.ToString())
+                new XAttribute("ShowFooter", ShowFooter.ToString()),
+                new XAttribute("CreateNew", CreateNew.ToString())
                 );
         }
 
@@ -222,6 +226,7 @@ namespace Signum.Entities.Dashboard
             RenderMode = element.Attribute("RenderMode")?.Value.ToEnum<UserQueryPartRenderMode>() ?? UserQueryPartRenderMode.SearchControl;
             AllowSelection = element.Attribute("AllowSelection")?.Value.ToBool() ?? true;
             ShowFooter = element.Attribute("ShowFooter")?.Value.ToBool() ?? false;
+            CreateNew = element.Attribute("CreateNew")?.Value.ToBool() ?? false;
         }
     }
 
