@@ -332,6 +332,7 @@ export module API {
   }
 
   export interface ResetPasswordRequest {
+    subCode: string | null | undefined;
     code: string;
     newPassword: string;
   }

@@ -18,6 +18,10 @@ namespace Signum.Engine.Authorization
 {
     public static class ResetPasswordRequestLogic
     {
+        public static Func<string, UserEntity?>? ValidateEmail;
+        public static Func<string, UserEntity, string?>? ValidateSubCode;
+        public static Func<string, UserEntity, string?>? ChangePasswordHandler;
+
         public static void Start(SchemaBuilder sb)
         {
             if (sb.NotDefined(MethodInfo.GetCurrentMethod()))
@@ -35,7 +39,10 @@ namespace Signum.Engine.Authorization
 
                 EmailLogic.AssertStarted(sb);
 
-                EmailModelLogic.RegisterEmailModel<ResetPasswordRequestEmail>(() => new EmailTemplateEntity
+                EmailModelLogic.RegisterEmailModel<ResetPasswordRequestEmail>(null);
+
+                ///Disabled default template because i want to create it from web app
+                /*() => new EmailTemplateEntity
                 {
                     DisableAuthorization = true,
                     Messages = CultureInfoLogic.ForEachCulture(culture => new EmailTemplateMessageEmbedded(culture)
@@ -46,7 +53,7 @@ namespace Signum.Engine.Authorization
                             "<p><a href=\"@[m:Url]\">@[m:Url]</a></p>",
                         Subject = AuthEmailMessage.ResetPasswordRequestSubject.NiceToString()
                     }).ToMList()
-                });
+                });*/
 
 
 
@@ -71,7 +78,7 @@ namespace Signum.Engine.Authorization
         }
 
 
-        public static ResetPasswordRequestEntity ResetPasswordRequestExecute(string code, string password)
+        public static ResetPasswordRequestEntity ResetPasswordRequestExecute(string subCode, string code, string password)
         {
             using (AuthLogic.Disable())
             {
@@ -80,11 +87,30 @@ namespace Signum.Engine.Authorization
                      .Where(r => r.Code == code && !r.Lapsed)
                      .SingleOrDefault();
 
-                using (UserHolder.UserSession(rpr.User))
+                if (ValidateSubCode != null)
                 {
-                    rpr.Execute(ResetPasswordRequestOperation.Execute, password);
+                    var res = ValidateSubCode(subCode, rpr.User);
+                    if (res != null)
+                        throw new InvalidOperationException(res);
                 }
-                return rpr;
+
+                using (Transaction tr = new Transaction())
+                {
+                    using (UserHolder.UserSession(rpr.User))
+                    {
+                        rpr.Execute(ResetPasswordRequestOperation.Execute, password);
+                    }
+
+                    if(ChangePasswordHandler!=null)
+                    {
+                        var res = ChangePasswordHandler(password, rpr.User);
+                        if(res != null)
+                            throw new InvalidOperationException(res);
+                    }
+
+                    tr.Commit();
+                    return rpr;
+                }
             }
         }
 
@@ -93,16 +119,23 @@ namespace Signum.Engine.Authorization
             UserEntity user;
             using (AuthLogic.Disable())
             {
-                user = Database.Query<UserEntity>()
-                  .Where(u => u.Email == email && u.State != UserState.Disabled)
-                .SingleOrDefault();
+                if (ValidateEmail != null)
+                {
+                    user = ValidateEmail(email)!;
+                }
+                else
+                {
+                    user = Database.Query<UserEntity>()
+                      .Where(u => u.Email == email && u.State != UserState.Disabled)
+                    .SingleOrDefault();
+                }
 
                 if (user == null)
                     throw new ApplicationException(AuthEmailMessage.EmailNotFound.NiceToString());
             }
-            var request= ResetPasswordRequest(user);
+            var request = ResetPasswordRequest(user);
 
-            string url = EmailLogic.Configuration.UrlLeft+ @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
+            string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
 
             using (AuthLogic.Disable())
                 new ResetPasswordRequestEmail(request, url).SendMail();

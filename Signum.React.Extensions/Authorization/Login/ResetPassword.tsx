@@ -29,6 +29,7 @@ export default function ResetPassword(p: RouteComponentProps<{}>) {
         return;
 
       const request: AuthClient.API.ResetPasswordRequest = {
+        subCode: null,
         code: code,
         newPassword: newPassword.current!.value,
       };

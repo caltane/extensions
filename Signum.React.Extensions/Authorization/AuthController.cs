@@ -195,7 +195,7 @@ namespace Signum.React.Authorization
             if (string.IsNullOrEmpty(request.newPassword))
                 return ModelError("newPassword", LoginAuthMessage.PasswordMustHaveAValue.NiceToString());
 
-            var rpr = ResetPasswordRequestLogic.ResetPasswordRequestExecute(request.code, request.newPassword);
+            var rpr = ResetPasswordRequestLogic.ResetPasswordRequestExecute(request.subCode, request.code, request.newPassword);
 
 
 
@@ -235,6 +235,7 @@ namespace Signum.React.Authorization
         public class ResetPasswordRequest
         {
             public string code { get; set; }
+            public string subCode { get; set; }
             public string newPassword { get; set; }
         }
 
