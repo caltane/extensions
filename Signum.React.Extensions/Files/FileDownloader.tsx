@@ -6,7 +6,7 @@ import { ModifiableEntity, Lite, Entity, isModifiableEntity, getToString } from 
 import { IFile, FileEntity, FilePathEntity, FileEmbedded, FilePathEmbedded } from './Signum.Entities.Files'
 import { Type } from '@framework/Reflection';
 import "./Files.css"
-import { QueryString } from '@framework/QueryString'
+import { QueryString } from '../../../Framework/Signum.React/Scripts/QueryString'
 
 export type DownloadBehaviour = "SaveAs" | "View" | "None";
 

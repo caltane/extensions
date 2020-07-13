@@ -22,7 +22,6 @@ import { DiffDocument } from './DiffDocument'
 import { SearchControlHandler } from '@framework/SearchControl/SearchControl'
 import { useAPI, useForceUpdate } from '@framework/Hooks'
 import { asUTC } from '@framework/SearchControl/SystemTimeEditor'
-import { QueryString } from '../../../../Framework/Signum.React/Scripts/QueryString'
 import { ModalHeaderButtons } from '../../../../Framework/Signum.React/Scripts/Components'
 import { IModalProps, openModal } from '../../../../Framework/Signum.React/Scripts/Modals'
 

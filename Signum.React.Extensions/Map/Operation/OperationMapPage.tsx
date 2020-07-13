@@ -14,6 +14,7 @@ import { useAPI, useSize } from '@framework/Hooks'
 import { useExpand } from '@framework/AppContext'
 import { QueryString } from '@framework/QueryString'
 
+
 interface OperationMapPageProps extends RouteComponentProps<{ type: string }> {
 
 }

@@ -24,6 +24,7 @@ import { JavascriptMessage } from '@framework/Signum.Entities';
 import { useForceUpdate, useAPI, useInterval } from '@framework/Hooks'
 import { QueryString } from '@framework/QueryString'
 
+
 interface DynamicPanelProps extends RouteComponentProps<{}> {
 }
 

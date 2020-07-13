@@ -6,7 +6,7 @@ import { PropertyRoute, PseudoType, QueryKey, getQueryKey, getTypeName, getTypeI
 import { ImportRoute } from "@framework/AsyncImport";
 import "./Help.css"
 import { NamespaceHelpEntity, TypeHelpEntity, AppendixHelpEntity } from './Signum.Entities.Help';
-import { QueryString } from '@framework/QueryString';
+import { QueryString } from '@framework/QueryString'
 
 export function start(options: { routes: JSX.Element[], markdownToHtml: (txt: string) => string }) {
 

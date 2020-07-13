@@ -9,6 +9,7 @@ import { RouteComponentProps } from 'react-router'
 import { useStateWithPromise } from '@framework/Hooks'
 import { QueryString } from '@framework/QueryString'
 
+
 interface ChartRequestPageProps extends RouteComponentProps<{ queryName: string; }> {
 
 }

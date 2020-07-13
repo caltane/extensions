@@ -24,7 +24,8 @@ import MessageModal from "@framework/Modals/MessageModal";
 import { Dic } from "@framework/Globals";
 import * as Components from "@framework/Components";
 import * as Constructor from "@framework/Constructor"
-import { QueryString } from '@framework/QueryString';
+import { QueryString } from '@framework/QueryString'
+
 
 export function start(options: { routes: JSX.Element[] }) {
 

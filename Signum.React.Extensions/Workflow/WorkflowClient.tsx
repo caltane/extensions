@@ -51,7 +51,8 @@ import { EntityLine } from '@framework/Lines';
 import { SMSMessageEntity } from '../SMS/Signum.Entities.SMS';
 import { EmailMessageEntity } from '../Mailing/Signum.Entities.Mailing';
 import { FunctionalAdapter } from '@framework/Modals';
-import { QueryString } from '@framework/QueryString';
+import { QueryString } from '@framework/QueryString'
+
 
 export function start(options: { routes: JSX.Element[], overrideCaseActivityMixin?: boolean }) {
 

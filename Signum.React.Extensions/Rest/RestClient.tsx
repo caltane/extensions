@@ -3,7 +3,7 @@ import { EntitySettings } from "@framework/Navigator";
 import * as Navigator from "@framework/Navigator";
 import { ajaxGet } from "@framework/Services";
 import * as AuthClient from "../Authorization/AuthClient";
-import { QueryString } from '@framework/QueryString';
+import { QueryString } from '../../../Framework/Signum.React/Scripts/QueryString';
 
 export function registerAuthenticator() {
   AuthClient.authenticators.insertAt(0, loginFromApiKey);

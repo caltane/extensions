@@ -25,7 +25,7 @@ import { ColumnRequest } from '@framework/FindOptions';
 import { toMomentFormat } from '@framework/Reflection';
 import { toNumbroFormat } from '@framework/Reflection';
 import { toFilterRequests, toFilterOptions } from '@framework/Finder';
-import { QueryString } from '@framework/QueryString';
+import { QueryString } from '@framework/QueryString'
 
 export function start(options: { routes: JSX.Element[], googleMapsApiKey?: string }) {
 
