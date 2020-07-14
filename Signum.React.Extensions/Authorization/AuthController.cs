@@ -189,6 +189,12 @@ namespace Signum.React.Authorization
             return null;
         }
 
+        [HttpPost("api/auth/checkCode"), SignumAllowAnonymous]
+        public ActionResult CheckCode([FromBody]string code)
+        {
+            return Ok(ResetPasswordRequestLogic.CheckCode(code));
+        }
+
         [HttpPost("api/auth/resetPassword"), SignumAllowAnonymous]
         public ActionResult<LoginResponse> ResetPassword([Required, FromBody]ResetPasswordRequest request)
         {

@@ -356,4 +356,8 @@ export module API {
   export function logout(): Promise<void> {
     return ajaxPost({ url: "~/api/auth/logout" }, undefined);
   }
+
+  export function checkCode(code: string): Promise<boolean> {
+    return ajaxPost({ url: "~/api/auth/checkCode" }, code);
+  }
 }

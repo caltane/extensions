@@ -87,6 +87,9 @@ namespace Signum.Engine.Authorization
                      .Where(r => r.Code == code && !r.Lapsed)
                      .SingleOrDefault();
 
+                if (rpr == null)
+                    throw new NullReferenceException("ResetPasswordRequest not found");
+
                 if (ValidateSubCode != null)
                 {
                     var res = ValidateSubCode(subCode, rpr.User);
@@ -138,10 +141,20 @@ namespace Signum.Engine.Authorization
             string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
 
             using (AuthLogic.Disable())
-                new ResetPasswordRequestEmail(request, url).SendMail();
+                new ResetPasswordRequestEmail(request, url, email).SendMail();
 
             return request;
         }
+
+        public static bool CheckCode(string code)
+        {
+            using (AuthLogic.Disable())
+            {
+                return Database.Query<ResetPasswordRequestEntity>()
+                    .Any(r => r.Code == code && !r.Lapsed);
+            }
+        }
+
         public static ResetPasswordRequestEntity ResetPasswordRequest(UserEntity user)
         {
             using (AuthLogic.Disable())
@@ -168,18 +181,22 @@ namespace Signum.Engine.Authorization
     public class ResetPasswordRequestEmail : EmailModel<ResetPasswordRequestEntity>
     {
         public string Url;
+        public string Email;
 
-        public ResetPasswordRequestEmail(ResetPasswordRequestEntity entity) : this(entity, "http://wwww.tesurl.com")
+        public ResetPasswordRequestEmail(ResetPasswordRequestEntity entity) : this(entity, "http://wwww.tesurl.com", "test@gmail.com")
         { }
 
-        public ResetPasswordRequestEmail(ResetPasswordRequestEntity entity, string url) : base(entity)
+        public ResetPasswordRequestEmail(ResetPasswordRequestEntity entity, string url, string email) : base(entity)
         {
             this.Url = url;
+            this.Email = email;
         }
 
         public override List<EmailOwnerRecipientData> GetRecipients()
         {
-            return SendTo(Entity.User.EmailOwnerData);
+            var owner = Entity.User.EmailOwnerData;
+            owner.Email = Email;
+            return SendTo(owner);
         }
     }
 }
