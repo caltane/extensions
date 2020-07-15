@@ -168,7 +168,7 @@ namespace Signum.Engine.Authorization
 
                 return new ResetPasswordRequestEntity()
                 {
-                    Code = MyRandom.Current.NextString(5),
+                    Code = Guid.NewGuid().ToString(),
                     User = user,
                     RequestDate = TimeZoneManager.Now,
                 }.Save();
