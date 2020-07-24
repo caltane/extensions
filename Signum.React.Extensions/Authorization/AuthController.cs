@@ -156,8 +156,11 @@ namespace Signum.React.Authorization
 
             var user = UserEntity.Current;
 
-            if (!user.PasswordHash.SequenceEqual(Security.EncodePassword(request.oldPassword)))
-                return ModelError("oldPassword", LoginAuthMessage.InvalidPassword.NiceToString());
+            if(ResetPasswordRequestLogic.ChangePasswordImpersonateHandler == null)
+                if (!user.PasswordHash.SequenceEqual(Security.EncodePassword(request.oldPassword)))
+                    return ModelError("oldPassword", LoginAuthMessage.InvalidPassword.NiceToString());
+
+            ResetPasswordRequestLogic.ChangePasswordImpersonateHandler?.Invoke(user, request.oldPassword, request.newPassword);
 
             user.PasswordHash = Security.EncodePassword(request.newPassword);
             using (AuthLogic.Disable())
@@ -198,15 +201,12 @@ namespace Signum.React.Authorization
         [HttpPost("api/auth/resetPassword"), SignumAllowAnonymous]
         public ActionResult<LoginResponse> ResetPassword([Required, FromBody]ResetPasswordRequest request)
         {
-            if (string.IsNullOrEmpty(request.newPassword))
+            if (string.IsNullOrEmpty(request.newPassword) && string.IsNullOrEmpty(request.code))
                 return ModelError("newPassword", LoginAuthMessage.PasswordMustHaveAValue.NiceToString());
 
             var rpr = ResetPasswordRequestLogic.ResetPasswordRequestExecute(request.subCode, request.code, request.newPassword);
 
-
-
-
-            return new LoginResponse { userEntity = rpr.User, token = AuthTokenServer.CreateToken(rpr.User), authenticationType = "resetPassword" };
+            return new LoginResponse { userEntity = rpr.User, token = AuthTokenServer.CreateToken(rpr.User), authenticationType = "resetPassword", message = rpr.Code };
         }
 
         private BadRequestObjectResult ModelError(string field, string error)

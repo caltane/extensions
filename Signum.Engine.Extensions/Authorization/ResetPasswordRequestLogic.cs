@@ -20,7 +20,12 @@ namespace Signum.Engine.Authorization
     {
         public static Func<string, UserEntity?>? ValidateEmail;
         public static Func<string, UserEntity, string?>? ValidateSubCode;
-        public static Func<string, UserEntity, string?>? ChangePasswordHandler;
+        public static Func<string, UserEntity, string?>? ChangePasswordForcedHandler;
+
+        /// <summary>
+        /// UserEntity, OldPass, NewPass
+        /// </summary>
+        public static Action<UserEntity, string, string>? ChangePasswordImpersonateHandler;
 
         public static void Start(SchemaBuilder sb)
         {
@@ -55,8 +60,6 @@ namespace Signum.Engine.Authorization
                     }).ToMList()
                 });*/
 
-
-
                 new Graph<ResetPasswordRequestEntity>.Execute(ResetPasswordRequestOperation.Execute)
                 {
                     CanBeNew = false,
@@ -82,6 +85,12 @@ namespace Signum.Engine.Authorization
         {
             using (AuthLogic.Disable())
             {
+                //Checking the last request if have 24h between the new request
+                if (Database.Query<ResetPasswordRequestEntity>()
+                     .Where(r => r.RequestDate > DateTime.Now.AddHours(-24))
+                     .Any())
+                    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());
+
                 //Remove old previous requests
                 var rpr = Database.Query<ResetPasswordRequestEntity>()
                      .Where(r => r.Code == code && !r.Lapsed)
@@ -104,12 +113,31 @@ namespace Signum.Engine.Authorization
                         rpr.Execute(ResetPasswordRequestOperation.Execute, password);
                     }
 
-                    if(ChangePasswordHandler!=null)
+                    if (ChangePasswordForcedHandler != null)
                     {
-                        var res = ChangePasswordHandler(password, rpr.User);
-                        if(res != null)
+                        //PreChecking if have email template
+
+
+                        //Create random pass
+                        string pass = new Random().Next() + new Random().Next() + new Random().Next() + new Random().NextUppercaseString(3) + new Random().NextLowercaseString(3);
+
+                        //Changing password
+                        var res = ChangePasswordForcedHandler(pass, rpr.User);
+                        if (res != null)
                             throw new InvalidOperationException(res);
+
+                        //Returning password generated
+                        rpr.Code = pass;
+
+                        /*using (Transaction trr = Transaction.NamedSavePoint("subEmail"))
+                        {
+                            //Sending email
+
+
+                            trr.Commit();
+                        }*/
                     }
+
 
                     tr.Commit();
                     return rpr;

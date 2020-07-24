@@ -97,6 +97,8 @@ namespace Signum.Entities.Authorization
         WeHaveSendYouAnEmailToResetYourPassword,
         [Description("Email not found")]
         EmailNotFound,
+        [Description("You not have 24h from the last request to this")]
+        NotHave24HoursBetweenRequests
     }
 
     public enum AuthAdminMessage
