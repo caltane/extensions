@@ -92,8 +92,7 @@ namespace Signum.Engine.Authorization
             {
                 //Checking the last request if have 24h between the new request
                 if (Database.Query<ResetPasswordRequestEntity>()
-                     .Where(r => r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code)
-                     .Any())
+                     .Any(r => r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Lapsed))
                     throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());
 
                 //Remove old previous requests
