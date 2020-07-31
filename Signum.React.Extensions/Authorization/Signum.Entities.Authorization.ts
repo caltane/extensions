@@ -247,6 +247,7 @@ export interface ResetPasswordRequestEntity extends Entities.Entity {
   user: UserEntity;
   requestDate: string;
   lapsed: boolean;
+  executed: boolean;
 }
 
 export module ResetPasswordRequestOperation {
