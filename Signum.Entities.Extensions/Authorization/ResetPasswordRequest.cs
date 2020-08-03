@@ -7,12 +7,14 @@ namespace Signum.Entities.Authorization
     {
         [StringLengthValidator(Max = 200)]
         public string Code { get; set; }
-        
+
         public UserEntity User { get; set; }
 
         public DateTime RequestDate { get; set; }
 
         public bool Lapsed { get; set; }
+
+        public bool Executed { get; set; }
     }
 
     [AutoInit]

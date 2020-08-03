@@ -74,6 +74,7 @@ namespace Signum.Engine.Authorization
                     {
                         string password = args.GetArg<string>();
                         e.Lapsed = true;
+                        e.Executed = true;
                         var user = e.User;
 
                         user.PasswordHash = Security.EncodePassword(password);
@@ -90,10 +91,13 @@ namespace Signum.Engine.Authorization
         {
             using (AuthLogic.Disable())
             {
+
+                var user = Database.Query<ResetPasswordRequestEntity>().Where(el => el.Code == code).Select(el => el.User).Single();
+                
                 //Checking the last request if have 24h between the new request
-                /*if (Database.Query<ResetPasswordRequestEntity>()
-                     .Any(r => r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Lapsed))
-                    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());*/
+                if (Database.Query<ResetPasswordRequestEntity>()
+                     .Any(r => r.User.Is(user) && r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Executed))
+                    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());
 
                 //Remove old previous requests
                 var rpr = Database.Query<ResetPasswordRequestEntity>()
@@ -180,7 +184,7 @@ namespace Signum.Engine.Authorization
             using (AuthLogic.Disable())
             {
                 return Database.Query<ResetPasswordRequestEntity>()
-                    .Any(r => r.Code == code && !r.Lapsed);
+                    .Any(r => r.Code == code && !r.Lapsed && !r.Executed);
             }
         }
 
