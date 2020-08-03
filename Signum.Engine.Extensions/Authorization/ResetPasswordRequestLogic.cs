@@ -20,12 +20,12 @@ namespace Signum.Engine.Authorization
     {
         public static Func<string, UserEntity?>? ValidateEmail;
         public static Func<string, UserEntity, string?>? ValidateSubCode;
-        public static Func<string, UserEntity, string?>? ChangePasswordForcedHandler;
+        public static Func<string, UserEntity, string>? ChangePasswordForcedHandler;
 
         /// <summary>
         /// Parameteres: Email to sent, password generated, RPR to make the email
         /// </summary>
-        public static Action<string?, string, ResetPasswordRequestEntity>? EmailPreChangeHandler;
+        public static Action<string?, string, string, ResetPasswordRequestEntity>? EmailPreChangeHandler;
 
         /// <summary>
         /// Parameters: UserEntity, OldPass, NewPass
@@ -91,9 +91,9 @@ namespace Signum.Engine.Authorization
             using (AuthLogic.Disable())
             {
                 //Checking the last request if have 24h between the new request
-                if (Database.Query<ResetPasswordRequestEntity>()
+                /*if (Database.Query<ResetPasswordRequestEntity>()
                      .Any(r => r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Lapsed))
-                    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());
+                    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());*/
 
                 //Remove old previous requests
                 var rpr = Database.Query<ResetPasswordRequestEntity>()
@@ -124,18 +124,16 @@ namespace Signum.Engine.Authorization
 
                         //Changing password
                         var res = ChangePasswordForcedHandler(pass, rpr.User);
-                        if (res != null)
-                            throw new InvalidOperationException(res);
 
                         //Returning password generated
-                        rpr.Code = pass;
+                        rpr.Code = res;
 
                         using (Transaction trr = Transaction.NamedSavePoint("subEmail"))
                         {
                             try
                             {
                                 //Sending email
-                                EmailPreChangeHandler?.Invoke(null, pass, rpr);
+                                EmailPreChangeHandler?.Invoke(null, pass, rpr.Code, rpr);
                                 trr.Commit();
                             }
                             catch (Exception) { }
