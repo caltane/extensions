@@ -58,7 +58,10 @@ export function start(options: { routes: JSX.Element[] }) {
   Navigator.addSettings(new EntitySettings(UserQueryPartEntity, e => import('./Admin/UserQueryPart')));
   Navigator.addSettings(new EntitySettings(ImagePartEntity, e => import('./Admin/ImagePartAdmin')));
 
-  Finder.addSettings({ queryName: DashboardEntity, defaultOrderColumn: DashboardEntity.token(d => d.dashboardPriority), defaultOrderType: "Descending" });
+  Finder.addSettings({
+    queryName: DashboardEntity,
+    defaultOrders: [{ token: DashboardEntity.token(d => d.dashboardPriority), orderType: "Descending" }]
+  });
 
   options.routes.push(<ImportRoute path="~/dashboard/:dashboardId" onImportModule={() => import("./View/DashboardPage")} />);
 

@@ -40,6 +40,7 @@ namespace Signum.Engine.Dashboard
                     {"UserQueryPart", typeof(UserQueryPartEntity)},
                     {"LinkListPart", typeof(LinkListPartEntity)},
                     {"ValueUserQueryListPart", typeof(ValueUserQueryListPartEntity)},
+                    {"UserTreePart", typeof(UserTreePartEntity)},
                 });
 
                 sb.Include<DashboardEntity>()
@@ -173,7 +174,7 @@ namespace Signum.Engine.Dashboard
             var isAllowed = Schema.Current.GetInMemoryFilter<DashboardEntity>(userInterface: false);
 
             var result = DashboardsByType.Value.TryGetC(entityType).EmptyIfNull().Select(lite => Dashboards.Value.GetOrThrow(lite))
-                .Where(d => d.EmbeddedInEntity.Value != DashboardEmbedededInEntity.None && isAllowed(d))
+                .Where(d => d.EmbeddedInEntity != DashboardEmbedededInEntity.None && isAllowed(d))
                 .OrderByDescending(a => a.DashboardPriority)
                 .ToList();
 

@@ -77,6 +77,10 @@ namespace Signum.Engine.Authorization
                         e.Executed = true;
                         var user = e.User;
 
+                        var error = UserEntity.OnValidatePassword(password);
+                        if (error != null)
+                            throw new ApplicationException(error);
+
                         user.PasswordHash = Security.EncodePassword(password);
                         using (AuthLogic.Disable())
                             user.Execute(UserOperation.Save);
@@ -171,12 +175,23 @@ namespace Signum.Engine.Authorization
             }
             var request = ResetPasswordRequest(user);
 
-            string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
+            try
+            {
+                var request = ResetPasswordRequest(user);
 
-            using (AuthLogic.Disable())
-                new ResetPasswordRequestEmail(request, url, email).SendMail();
+                string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
 
-            return request;
+                using (AuthLogic.Disable())
+                    new ResetPasswordRequestEmail(request, url).SendMail();
+
+                return request;
+            }
+            catch (Exception ex)
+            {
+                ex.LogException();
+                throw new ApplicationException(LoginAuthMessage.AnErrorOccurredRequestNotProcessed.NiceToString());
+            }
+
         }
 
         public static bool CheckCode(string code)
