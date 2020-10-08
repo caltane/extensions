@@ -196,12 +196,12 @@ namespace Signum.Engine.Authorization
 
         public static bool CheckCode(string code)
         {
-            using (AuthLogic.Disable())
             {
                 return Database.Query<ResetPasswordRequestEntity>()
                     .Any(r => r.Code == code && !r.Lapsed && !r.Executed);
             }
         }
+
 
         public static ResetPasswordRequestEntity ResetPasswordRequest(UserEntity user)
         {

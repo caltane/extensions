@@ -15,7 +15,6 @@ import { useExpand } from '@framework/AppContext'
 import { QueryString } from '@framework/QueryString'
 
 
-
 interface OperationMapPropsState {
   operationMapInfo?: OperationMapInfo;
   width?: number;
