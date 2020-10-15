@@ -173,7 +173,6 @@ namespace Signum.Engine.Authorization
                 if (user == null)
                     throw new ApplicationException(AuthEmailMessage.EmailNotFound.NiceToString());
             }
-            var request = ResetPasswordRequest(user);
 
             try
             {
@@ -182,7 +181,7 @@ namespace Signum.Engine.Authorization
                 string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
 
                 using (AuthLogic.Disable())
-                    new ResetPasswordRequestEmail(request, url).SendMail();
+                    new ResetPasswordRequestEmail(request, url, null!).SendMail();
 
                 return request;
             }
