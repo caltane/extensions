@@ -225,6 +225,7 @@ namespace Signum.React.Authorization
             public string authenticationType { get; set; }
             public string token { get; set; }
             public UserEntity userEntity { get; set; }
+            public string message { get; set; }
         }
 
         public class ChangePasswordRequest
