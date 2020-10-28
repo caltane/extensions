@@ -96,7 +96,7 @@ namespace Signum.Entities.Authorization
         [Description("We have send you an email to reset your password")]
         WeHaveSendYouAnEmailToResetYourPassword,
         [Description("Email not found")]
-        EmailNotFound,
+        EmailNotFound1,
         [Description("You not have 24h from the last request to this")]
         NotHave24HoursBetweenRequests
     }
