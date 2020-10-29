@@ -167,7 +167,7 @@ namespace Signum.Engine.Authorization
                 }
 
                 if (user == null)
-                    throw new ApplicationException(AuthEmailMessage.EmailNotFound.NiceToString(email));
+                    throw new ApplicationException(AuthEmailMessage.EmailNotFound1.NiceToString(email));
             }
             var request = ResetPasswordRequest(user);
 

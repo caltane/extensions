@@ -74,7 +74,7 @@ export module AuthEmailMessage {
   export const ResetPasswordRequestSubject = new MessageKey("AuthEmailMessage", "ResetPasswordRequestSubject");
   export const YourResetPasswordRequestHasExpired = new MessageKey("AuthEmailMessage", "YourResetPasswordRequestHasExpired");
   export const WeHaveSendYouAnEmailToResetYourPassword = new MessageKey("AuthEmailMessage", "WeHaveSendYouAnEmailToResetYourPassword");
-  export const EmailNotFound = new MessageKey("AuthEmailMessage", "EmailNotFound");
+  export const EmailNotFound1 = new MessageKey("AuthEmailMessage", "EmailNotFound1");
   export const NotHave24HoursBetweenRequests = new MessageKey("AuthEmailMessage", "NotHave24HoursBetweenRequests");
 }
 
