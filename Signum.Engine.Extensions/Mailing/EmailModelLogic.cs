@@ -156,7 +156,7 @@ namespace Signum.Engine.Mailing
                         se.FullClassName,
                     });
 
-                UserAssetsImporter.RegisterName<EmailTemplateEntity>("EmailTemplate");
+                UserAssetsImporter.Register<EmailTemplateEntity>("EmailTemplate", EmailTemplateOperation.Save);
 
 
                 new Graph<EmailTemplateEntity>.ConstructFrom<EmailModelEntity>(EmailTemplateOperation.CreateEmailTemplateFromModel)
@@ -178,7 +178,7 @@ namespace Signum.Engine.Mailing
                         dbModels,
                         registeredModels.Keys,
                         entity => entity.FullClassName,
-                        type => type.FullName,
+                        type => type.FullName!,
                         (entity, type) => KeyValuePair.Create(type, entity),
                         "caching " + nameof(EmailModelEntity))
                         .ToDictionary();

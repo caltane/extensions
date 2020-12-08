@@ -74,6 +74,7 @@ export interface ChartScriptProps {
   parameters: { [name: string]: string },
   loading: boolean;
   onDrillDown: (row: ChartRow, e: React.MouseEvent<any> | MouseEvent) => void;
+  onReload: (() => void) | undefined;
   width: number;
   height: number;
   initialLoad: boolean;
@@ -158,12 +159,9 @@ export interface StringValue {
 }
 
 
-export let chartScripts: ChartScript[];
+let chartScripts: Promise<ChartScript[]>;
 export function getChartScripts(): Promise<ChartScript[]> {
-  if (chartScripts)
-    return Promise.resolve(chartScripts);
-
-  return API.fetchScripts().then(cs => chartScripts = cs);
+  return chartScripts ?? (chartScripts = API.fetchScripts());
 }
 
 export function getChartScript(symbol: ChartScriptSymbol): Promise<ChartScript> {
@@ -765,7 +763,6 @@ export module API {
 
   export function executeChart(request: ChartRequestModel, chartScript: ChartScript, abortSignal?: AbortSignal): Promise<ExecuteChartResult> {
     return Navigator.API.validateEntity(cleanedChartRequest(request)).then(cr => {
-
       const queryRequest = getRequest(request);
 
       var allTypes = request.columns

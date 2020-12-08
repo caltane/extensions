@@ -106,7 +106,7 @@ namespace Signum.Engine.Authorization
                 //Remove old previous requests
                 var rpr = Database.Query<ResetPasswordRequestEntity>()
                      .Where(r => r.Code == code && !r.Lapsed)
-                     .SingleOrDefault();
+                     .SingleEx();
 
                 if (rpr == null)
                     throw new NullReferenceException("ResetPasswordRequest not found");
@@ -156,9 +156,12 @@ namespace Signum.Engine.Authorization
 
         public static ResetPasswordRequestEntity SendResetPasswordRequestEmail(string email)
         {
-            UserEntity user;
+            UserEntity? user;
             using (AuthLogic.Disable())
             {
+                user = Database.Query<UserEntity>()
+                  .Where(u => u.Email == email && u.State != UserState.Disabled)
+                .SingleOrDefault();
                 if (ValidateEmail != null)
                 {
                     user = ValidateEmail(email)!;
@@ -169,6 +172,9 @@ namespace Signum.Engine.Authorization
                       .Where(u => u.Email == email && u.State != UserState.Disabled)
                     .SingleOrDefault();
                 }
+                user = Database.Query<UserEntity>()
+                  .Where(u => u.Email == email && u.State != UserState.Disabled)
+                  .SingleOrDefault();
 
                 if (user == null)
                     throw new ApplicationException(AuthEmailMessage.EmailNotFound.NiceToString());

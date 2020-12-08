@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.ComponentModel;
 using System.Reflection;
+using Signum.Entities.UserAssets;
 
 namespace Signum.Entities.Workflow
 {
@@ -24,10 +25,10 @@ namespace Signum.Entities.Workflow
         [StringLengthValidator(Min = 1, Max = 100)]
         public string BpmnElementId { get; set; }
 
+        public WorkflowActivityType Type { get; set; }
+
         [StringLengthValidator(Min = 3, Max = 400, MultiLine = true)]
         public string? Comments { get; set; }
-
-        public WorkflowActivityType Type { get; set; }
 
         public bool RequiresOpen { get; set; }
 
@@ -91,8 +92,8 @@ namespace Signum.Entities.Workflow
                 if (ViewName.HasText())
                 {
                     var dv = DynamicViewEntity.TryGetDynamicView(Lane.Pool.Workflow.MainEntityType.ToType(), ViewName);
-                    if(dv != null)
-                    return ViewNamePropEmbedded.ValidateViewNameProps(dv, ViewNameProps);
+                    if (dv != null)
+                        return ViewNamePropEmbedded.ValidateViewNameProps(dv, ViewNameProps);
                 }
             }
 
@@ -198,7 +199,7 @@ namespace Signum.Entities.Workflow
     [Serializable]
     public class WorkflowScriptPartEmbedded : EmbeddedEntity
     {
-        public Lite<WorkflowScriptEntity>? Script { get; set; }
+        public Lite<WorkflowScriptEntity> Script { get; set; }
 
         public WorkflowScriptRetryStrategyEntity? RetryStrategy { get; set; }
 
