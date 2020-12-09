@@ -165,7 +165,7 @@ namespace Signum.Entities.Dashboard
         {
             return new XElement("UserQueryPart",
                 new XAttribute("ImageSrcContent", ImageSrcContent),
-                new XAttribute("ClickActionURL", ClickActionURL)
+                new XAttribute("ClickActionURL", ClickActionURL!)
                 );
         }
 
