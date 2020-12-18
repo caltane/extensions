@@ -159,9 +159,6 @@ namespace Signum.Engine.Authorization
             UserEntity? user;
             using (AuthLogic.Disable())
             {
-                user = Database.Query<UserEntity>()
-                  .Where(u => u.Email == email && u.State != UserState.Disabled)
-                .SingleOrDefault();
                 if (ValidateEmail != null)
                 {
                     user = ValidateEmail(email)!;
@@ -172,9 +169,6 @@ namespace Signum.Engine.Authorization
                       .Where(u => u.Email == email && u.State != UserState.Disabled)
                     .SingleOrDefault();
                 }
-                user = Database.Query<UserEntity>()
-                  .Where(u => u.Email == email && u.State != UserState.Disabled)
-                  .SingleOrDefault();
 
                 if (user == null)
                     throw new ApplicationException(AuthEmailMessage.EmailNotFound.NiceToString());
