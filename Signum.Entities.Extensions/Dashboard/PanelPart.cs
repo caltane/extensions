@@ -35,6 +35,8 @@ namespace Signum.Entities.Dashboard
 
         public PanelStyle Style { get; set; }
 
+        public string? CustomColor { get; set; }
+
         [ImplementedBy(
             typeof(UserChartPartEntity),
             typeof(CombinedUserChartPartEntity),
@@ -122,6 +124,7 @@ namespace Signum.Entities.Dashboard
         Info,
         Warning,
         Danger,
+        CustomColor
     }
 
     public interface IGridEntity

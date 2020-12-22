@@ -59,9 +59,14 @@ export default function Dashboard(p : { ctx: TypeContext<DashboardEntity> }){
           <div style={{ flexGrow: 1 }} className="mr-2">
             <ValueLine ctx={tcs.subCtx(pp => pp.title)} labelText={getToString(tcs.value.content) ?? tcs.niceName(pp => pp.title)} />
             <div className="row">
-              <div className="col-sm-4">
+              <div className={tcs.value.style == 'CustomColor' ? "col-sm-2" : "col-sm-4"}>
                 <ValueLine ctx={tcs.subCtx(pp => pp.style)} onChange={() => forceUpdate()} />
               </div>
+              {tcs.value.style == 'CustomColor' &&
+                <div className="col-sm-2">
+                  <ValueLine ctx={tcs.subCtx(pp => pp.customColor)} onChange={() => forceUpdate()} />
+                </div>
+              }
               <div className="col-sm-4">
                 <IconTypeaheadLine ctx={tcs.subCtx(t => t.iconName)} onChange={() => forceUpdate()} />
               </div>
@@ -75,7 +80,7 @@ export default function Dashboard(p : { ctx: TypeContext<DashboardEntity> }){
     );
 
     return (
-      <EntityGridItem title={title} bsStyle={tc.value.style}>
+      <EntityGridItem title={title} bsStyle={tc.value.style} style={{ backgroundColor: (tc.value.style == 'CustomColor' ? tc.value.customColor ?? undefined : undefined) }}>
         <RenderEntity ctx={tc.subCtx(a => a.content)} />
       </EntityGridItem>
     );

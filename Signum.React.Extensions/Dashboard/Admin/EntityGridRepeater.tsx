@@ -299,20 +299,22 @@ export interface EntityGridItemProps {
   onTitleDragStart?: (e: React.DragEvent<any>) => void;
   onTitleDragEnd?: (e: React.DragEvent<any>) => void;
   onRemove?: (e: React.MouseEvent<any>) => void;
+  style?: React.CSSProperties
 }
 
 
 export function EntityGridItem(p : EntityGridItemProps){
   var style = p.bsStyle == undefined ? undefined : p.bsStyle.toLowerCase();
 
-    return (
-      <div className={classes("card", style && ("border-" + style), "shadow-sm")}>
+  return (
+    <div className={classes("card", style && ("border-" + style), "shadow-sm")}>
         <div className={classes("card-header",
           style && style != "light" && "text-white",
           style && ("bg-" + style)
       )} draggable={!!p.onTitleDragStart}
         onDragStart={p.onTitleDragStart}
-        onDragEnd={p.onTitleDragEnd} >
+        onDragEnd={p.onTitleDragEnd}
+        style={p.style}>
         {p.onRemove &&
           <a href="#" className="sf-line-button sf-remove float-right" onClick={p.onRemove}
               title={EntityControlMessage.Remove.niceToString()}>

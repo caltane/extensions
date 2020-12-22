@@ -99,6 +99,7 @@ export interface PanelPartEmbedded extends Entities.EmbeddedEntity {
   startColumn: number;
   columns: number;
   style: PanelStyle;
+  customColor: string | null;
   content: IPartEntity;
 }
 
@@ -111,7 +112,8 @@ export type PanelStyle =
   "Success" |
   "Info" |
   "Warning" |
-  "Danger";
+  "Danger" |
+  "CustomColor";
 
 export const UserChartPartEntity = new Type<UserChartPartEntity>("UserChartPart");
 export interface UserChartPartEntity extends Entities.Entity, IPartEntity {

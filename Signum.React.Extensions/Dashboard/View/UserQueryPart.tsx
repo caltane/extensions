@@ -32,6 +32,7 @@ export default function UserQueryPart(p: PanelPartContentProps<UserQueryPartEnti
       iconName={p.partEmbedded.iconName ?? undefined}
       iconColor={p.partEmbedded.iconColor ?? undefined}
       hideText={p.part.renderMode == "BigValueWithoutNumber"}
+      customColor={p.partEmbedded.customColor}
     />;
   }
 
@@ -72,6 +73,7 @@ interface BigValueBadgeProps {
   findOptions: FindOptions;
   text?: string;
   style: PanelStyle;
+  customColor: string | null;
   iconName?: string;
   iconColor?: string;
   hideText: boolean;
@@ -89,7 +91,7 @@ export function BigValueSearchCounter(p: BigValueBadgeProps) {
       p.style != "Light" && p.style != "Secondary" && "text-white",
       "bg-" + p.style.toLowerCase(),
       "o-hidden"
-    )}>
+    )} style={{ backgroundColor: p.customColor ?? undefined }}>
       <div className={classes("card-body", "bg-" + p.style.toLowerCase())} onClick={e => vsc.current!.handleClick(e)} style={{ cursor: "pointer" }}>
         <div className="row">
           <div className="col-3">
