@@ -97,7 +97,7 @@ namespace Signum.Engine.Authorization
             {
 
                 var user = Database.Query<ResetPasswordRequestEntity>().Where(el => el.Code == code).Select(el => el.User).Single();
-                
+
                 //Checking the last request if have 24h between the new request
                 if (Database.Query<ResetPasswordRequestEntity>()
                      .Any(r => r.User.Is(user) && r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Executed))
@@ -196,8 +196,9 @@ namespace Signum.Engine.Authorization
         public static bool CheckCode(string code)
         {
             {
-                return Database.Query<ResetPasswordRequestEntity>()
-                    .Any(r => r.Code == code && !r.Lapsed && !r.Executed);
+                using (AuthLogic.Disable())
+                    return Database.Query<ResetPasswordRequestEntity>()
+                        .Any(r => r.Code == code && !r.Lapsed && !r.Executed);
             }
         }
 
