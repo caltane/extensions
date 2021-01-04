@@ -77,10 +77,6 @@ namespace Signum.Engine.Authorization
                         e.Executed = true;
                         var user = e.User;
 
-                        var error = UserEntity.OnValidatePassword(password);
-                        if (error != null)
-                            throw new ApplicationException(error);
-
                         user.PasswordHash = Security.EncodePassword(password);
                         using (AuthLogic.Disable())
                             user.Execute(UserOperation.Save);
