@@ -178,7 +178,7 @@ namespace Signum.Engine.Authorization
             {
                 var request = ResetPasswordRequest(user);
 
-                string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
+                string url = EmailLogic.GetLeftUrl() + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
 
                 using (AuthLogic.Disable())
                     new ResetPasswordRequestEmail(request, url, email).SendMail();

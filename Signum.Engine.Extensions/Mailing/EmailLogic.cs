@@ -25,6 +25,8 @@ namespace Signum.Engine.Mailing
 {
     public static class EmailLogic
     {
+        public static Func<string> GetLeftUrl = null!;
+
         [AutoExpressionField]
         public static IQueryable<EmailMessageEntity> EmailMessages(this EmailPackageEntity e) =>
             As.Expression(() => Database.Query<EmailMessageEntity>().Where(a => a.Package.Is(e)));
@@ -39,14 +41,15 @@ namespace Signum.Engine.Mailing
 
         internal static void AssertStarted(SchemaBuilder sb)
         {
-            sb.AssertDefined(ReflectionTools.GetMethodInfo(() => EmailLogic.Start(null!, null!, null!, null)));
+            sb.AssertDefined(ReflectionTools.GetMethodInfo(() => EmailLogic.Start(null!, null!, null!, null, null)));
         }
 
         public static void Start(
             SchemaBuilder sb,
             Func<EmailConfigurationEmbedded> getConfiguration,
             Func<EmailTemplateEntity?, Lite<Entity>?, EmailMessageEntity?, EmailSenderConfigurationEntity> getEmailSenderConfiguration,
-            IFileTypeAlgorithm? attachment = null)
+            IFileTypeAlgorithm? attachment = null, 
+            Func<string>? getUrlLeft = null)
         {
             if (sb.NotDefined(MethodInfo.GetCurrentMethod()))
             {
@@ -57,6 +60,9 @@ namespace Signum.Engine.Mailing
                 EmailSenderConfigurationLogic.Start(sb);
                 if (attachment != null)
                     FileTypeLogic.Register(EmailFileType.Attachment, attachment);
+
+                if (getUrlLeft != null)
+                    GetLeftUrl = getUrlLeft;
 
                 Schema.Current.WhenIncluded<ProcessEntity>(() => EmailPackageLogic.Start(sb));
 
