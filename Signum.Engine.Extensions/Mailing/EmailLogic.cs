@@ -20,12 +20,13 @@ using Signum.Entities.Basics;
 using System.Text;
 using System.Threading;
 using Microsoft.Exchange.WebServices.Data;
+using Signum.Entities.Authorization;
 
 namespace Signum.Engine.Mailing
 {
     public static class EmailLogic
     {
-        public static Func<string> GetLeftUrl = null!;
+        public static Func<UserEntity, string> GetLeftUrl = null!;
 
         [AutoExpressionField]
         public static IQueryable<EmailMessageEntity> EmailMessages(this EmailPackageEntity e) =>
@@ -49,7 +50,7 @@ namespace Signum.Engine.Mailing
             Func<EmailConfigurationEmbedded> getConfiguration,
             Func<EmailTemplateEntity?, Lite<Entity>?, EmailMessageEntity?, EmailSenderConfigurationEntity> getEmailSenderConfiguration,
             IFileTypeAlgorithm? attachment = null, 
-            Func<string>? getUrlLeft = null)
+            Func<UserEntity, string>? getUrlLeft = null)
         {
             if (sb.NotDefined(MethodInfo.GetCurrentMethod()))
             {
