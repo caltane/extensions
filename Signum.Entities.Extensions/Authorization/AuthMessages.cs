@@ -16,7 +16,7 @@ namespace Signum.Entities.Authorization
         User0IsDisabled,
 
         IncorrectPassword,
-
+        YourPasswordNeedAChange,
         Login,
         Password,
         ChangePassword,
@@ -44,6 +44,8 @@ namespace Signum.Entities.Authorization
         SendEmail,
         [Description("Give us your user's email and we will send you an email so you can reset your password.")]
         GiveUsYourUserEmailToResetYourPassword,
+        [Description("For security reasons, you must change your password the first time you enter the application")]
+        NeedToChangeThePasswordFirstTime,
         RequestAccepted,
         [Description("The password must have a value")]
         PasswordMustHaveAValue,

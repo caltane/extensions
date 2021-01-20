@@ -115,6 +115,7 @@ export module LoginAuthMessage {
   export const Username0IsNotValid = new MessageKey("LoginAuthMessage", "Username0IsNotValid");
   export const User0IsDisabled = new MessageKey("LoginAuthMessage", "User0IsDisabled");
   export const IncorrectPassword = new MessageKey("LoginAuthMessage", "IncorrectPassword");
+  export const YourPasswordNeedAChange = new MessageKey("LoginAuthMessage", "YourPasswordNeedAChange");
   export const Login = new MessageKey("LoginAuthMessage", "Login");
   export const Password = new MessageKey("LoginAuthMessage", "Password");
   export const ChangePassword = new MessageKey("LoginAuthMessage", "ChangePassword");
@@ -132,6 +133,7 @@ export module LoginAuthMessage {
   export const EnterYourUserEmail = new MessageKey("LoginAuthMessage", "EnterYourUserEmail");
   export const SendEmail = new MessageKey("LoginAuthMessage", "SendEmail");
   export const GiveUsYourUserEmailToResetYourPassword = new MessageKey("LoginAuthMessage", "GiveUsYourUserEmailToResetYourPassword");
+  export const NeedToChangeThePasswordFirstTime = new MessageKey("LoginAuthMessage", "NeedToChangeThePasswordFirstTime");
   export const RequestAccepted = new MessageKey("LoginAuthMessage", "RequestAccepted");
   export const PasswordMustHaveAValue = new MessageKey("LoginAuthMessage", "PasswordMustHaveAValue");
   export const PasswordsAreDifferent = new MessageKey("LoginAuthMessage", "PasswordsAreDifferent");

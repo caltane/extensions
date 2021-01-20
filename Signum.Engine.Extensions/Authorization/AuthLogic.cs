@@ -661,6 +661,7 @@ namespace Signum.Engine.Authorization
     public interface ICustomAuthorizer
     {
         UserEntity Login(string userName, string password, out string authenticationType);
+        bool IsTheFirstTime(string user);
     }
 
     [Serializable]
