@@ -5,6 +5,7 @@
 import { MessageKey, QueryKey, Type, EnumType, registerSymbol } from '../../../Framework/Signum.React/Scripts/Reflection'
 import * as Entities from '../../../Framework/Signum.React/Scripts/Signum.Entities'
 import * as UserAssets from '../UserAssets/Signum.Entities.UserAssets'
+import * as UserQueries from '../UserQueries/Signum.Entities.UserQueries'
 
 
 export const ToolbarElementEmbedded = new Type<ToolbarElementEmbedded>("ToolbarElementEmbedded");
@@ -16,6 +17,7 @@ export interface ToolbarElementEmbedded extends Entities.EmbeddedEntity {
   iconColor: string | null;
   content: Entities.Lite<Entities.Entity> | null;
   url: string | null;
+  countQuery: UserQueries.UserQueryEntity | null;
   openInPopup: boolean;
   autoRefreshPeriod: number | null;
 }

@@ -94,6 +94,8 @@ namespace Signum.Entities.Toolbar
         [StringLengthValidator(Min = 1, Max = int.MaxValue), URLValidator(absolute: true, aspNetSiteRelative: true)]
         public string? Url { get; set; }
 
+        public UserQueryEntity? CountQuery { get; set; }
+
         public bool OpenInPopup { get; set; }
 
 

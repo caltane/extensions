@@ -14,6 +14,7 @@ import * as Constructor from '@framework/Constructor'
 import * as UserAssetClient from '../UserAssets/UserAssetClient'
 import { parseIcon } from '../Dashboard/Admin/Dashboard';
 import { ValueSearchControl } from '@framework/Search';
+import { UserQueryEntity } from '../UserQueries/Signum.Entities.UserQueries';
 
 export function start(options: { routes: JSX.Element[] }, ...configs: ToolbarConfig<any>[]) {
   Navigator.addSettings(new EntitySettings(ToolbarEntity, t => import('./Templates/Toolbar')));
@@ -86,4 +87,5 @@ export interface ToolbarResponse<T extends Entity> {
   elements?: Array<ToolbarResponse<any>>;
   openInPopup?: boolean;
   autoRefreshPeriod?: number;
+  countQuery: UserQueryEntity | null | undefined;
 }

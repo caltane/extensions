@@ -45,7 +45,8 @@ export function ToolbarElementTable({ ctx }: { ctx: TypeContext<MList<ToolbarEle
       { property: a => a.type, headerHtmlAttributes: { style: { width: "15%" } }, template: (ctx, row) => <ValueLine ctx={ctx.subCtx(a => a.type)} onChange={() => { fixToolbarElementType(ctx.value); row.forceUpdate(); }} /> },
       { property: a => a.content, headerHtmlAttributes: { style: { width: "30%" } }, template: ctx => ctx.value.type != "Divider" && <EntityLine ctx={ctx.subCtx(a => a.content)} /> },
       { property: a => a.label, headerHtmlAttributes: { style: { width: "25%" } }, template: ctx => ctx.value.type != "Divider" && <ValueLine ctx={ctx.subCtx(a => a.label)} /> },
-      { property: a => a.url, headerHtmlAttributes: { style: { width: "25%" } }, template: ctx => ctx.value.type != "Divider" && <ValueLine ctx={ctx.subCtx(a => a.url)} /> },
+        { property: a => a.url, headerHtmlAttributes: { style: { width: "12.5%" } }, template: ctx => ctx.value.type != "Divider" && <ValueLine ctx={ctx.subCtx(a => a.url)} /> },
+        { property: a => a.countQuery, headerHtmlAttributes: { style: { width: "12.5%" } }, template: ctx => ctx.value.type != "Divider" && <EntityLine ctx={ctx.subCtx(a => a.countQuery)} /> },
     ])} />
   );
 
