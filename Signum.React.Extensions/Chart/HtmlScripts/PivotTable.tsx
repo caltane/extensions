@@ -303,7 +303,7 @@ export default function renderPivotTable({ data, width, height, parameters, load
       e.preventDefault();
 
       if (Array.isArray(p.gor) && p.gor.length == 1 && p.gor[0].entity != null) {
-        Navigator.navigate(p.gor[0].entity as Lite<Entity>)
+        Navigator.view(p.gor[0].entity as Lite<Entity>)
           .then(() => onReload && onReload())
           .done();
         return;
@@ -362,7 +362,7 @@ export default function renderPivotTable({ data, width, height, parameters, load
 
       Finder.getPropsFromFilters(typeName, fop)
         .then(props => Constructor.construct(typeName, props))
-        .then(e => e && Navigator.navigate(e))
+        .then(e => e && Navigator.view(e))
         .then(() => onReload && onReload())
         .done();
     }
@@ -390,7 +390,7 @@ export default function renderPivotTable({ data, width, height, parameters, load
 
     function handleLiteClick(e: React.MouseEvent) {
       e.preventDefault();
-      Navigator.navigate(lite as Lite<Entity>)
+      Navigator.view(lite as Lite<Entity>)
         .then(() => onReload && onReload())
         .done();
     }
@@ -564,11 +564,14 @@ export default function renderPivotTable({ data, width, height, parameters, load
       <>
         {
           grhList.map(grh => {
+
+            var newFilters = [...filters, ...grh?.getFilters(false) ?? []];
+
             var grNext = gor && grh && (gor as RowDictionary)[grh.getKey()]?.dicOrRows;
             if (isLast)
-              return <Cell key={grh?.getKey()} style={valueStyle} isSummary={isSummary} gor={grNext} filters={[...filters, ...grh?.getFilters(false) ?? []]} />;
+              return <Cell key={grh?.getKey()} style={valueStyle} isSummary={isSummary} gor={grNext} filters={newFilters} />;
             else
-              return <CellGroup key={grh?.getKey()} gor={grNext} filters={filters} grhList={grh?.subGroups ?? empty} level={level + 1} isSummary={isSummary} />;
+              return <CellGroup key={grh?.getKey()} gor={grNext} filters={newFilters} grhList={grh?.subGroups ?? empty} level={level + 1} isSummary={isSummary} />;
           })
         }
         {horStyles[level].subTotal == "yes" && <Cell isSummary={(isSummary ?? 0) + (horStyles.length - level)} style={valueStyle}

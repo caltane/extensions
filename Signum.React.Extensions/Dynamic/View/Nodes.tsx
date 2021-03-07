@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ValueLine, EntityLine, EntityCombo, EntityList, EntityRepeater, EntityTabRepeater, EntityTable,
   EntityCheckboxList, EnumCheckboxList, EntityDetail, EntityStrip, RenderEntity, MultiValueLine, AutocompleteConfig, 
 } from '@framework/Lines'
-import { ModifiableEntity, Entity, Lite, isEntity } from '@framework/Signum.Entities'
+import { ModifiableEntity, Entity, Lite, isEntity, EntityPack } from '@framework/Signum.Entities'
 import { classes, Dic } from '@framework/Globals'
 import { SubTokensOptions } from '@framework/FindOptions'
 import { SearchControl, ValueSearchControlLine, FindOptionsParsed, ResultTable, SearchControlLoaded } from '@framework/Search'
@@ -31,9 +31,8 @@ import { Tab, Tabs, Button } from 'react-bootstrap';
 import { FileImageLine } from '../../Files/FileImageLine';
 import { FileEntity, FilePathEntity, FileEmbedded, FilePathEmbedded } from '../../Files/Signum.Entities.Files';
 import { ColorTypeahead } from '../../Basics/Templates/ColorTypeahead';
-import { IconTypeahead } from '../../Basics/Templates/IconTypeahead';
+import { IconTypeahead, parseIcon } from '../../Basics/Templates/IconTypeahead';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { parseIcon } from '../../Dashboard/Admin/Dashboard';
 import { EntityOperationContext } from '@framework/Operations';
 import { OperationButton } from '@framework/Operations/EntityOperations';
 import { useAPI } from '@framework/Hooks';
@@ -1228,7 +1227,7 @@ export interface SearchControlNode extends BaseNode {
   allowSelection?: ExpressionOrValue<boolean>;
   allowChangeColumns?: ExpressionOrValue<boolean>;
   create?: ExpressionOrValue<boolean>;
-  onCreate?: Expression<() => Promise<void | boolean>>;
+  onCreate?: Expression<() => Promise<undefined | EntityPack<any> | ModifiableEntity | "no_change">>;
   navigate?: ExpressionOrValue<boolean>;
   refreshKey?: Expression<number | string | undefined>;
   maxResultsHeight?: Expression<number | string>;
@@ -1294,7 +1293,7 @@ NodeUtils.register<SearchControlNode>({
     allowChangeColumns={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.allowChangeColumns, NodeUtils.isBooleanOrNull)}
     create={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.create, NodeUtils.isBooleanOrNull)}
     onCreate={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.onCreate, NodeUtils.isFunctionOrNull)}
-    navigate={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.navigate, NodeUtils.isBooleanOrNull)}
+    view={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.navigate, NodeUtils.isBooleanOrNull)}
     refreshKey={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.refreshKey, NodeUtils.isNumberOrStringOrNull)}
     maxResultsHeight={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.maxResultsHeight, NodeUtils.isNumberOrStringOrNull)}
     onSearch={NodeUtils.evaluateAndValidate(dn, ctx, dn.node, f => f.onSearch, NodeUtils.isFunctionOrNull)}
@@ -1337,7 +1336,7 @@ NodeUtils.register<SearchControlNode>({
 
         /* Set entity properties here... */
         /* pack.entity.[propertyName] = ... */
-        modules.Navigator.navigate(pack).done();
+        modules.Navigator.view(pack).done();
     }).done();
 }`} />
     <ExpressionOrValueComponent dn={dn} binding={Binding.create(dn.node, f => f.navigate)} type="boolean" defaultValue={null} />

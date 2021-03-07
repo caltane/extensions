@@ -32,6 +32,8 @@ interface CaseFramePageState {
 }
 
 export default class CaseFramePage extends React.Component<CaseFramePageProps, CaseFramePageState> implements IHasCaseActivity {
+  static showSubTitle = true;
+
   constructor(props: any) {
     super(props);
     this.state = this.calculateState(props);
@@ -158,7 +160,7 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
         this.forceUpdate()
       },
       refreshCount: this.state.refreshCount,
-      allowChangeEntity: false,
+      allowExchangeEntity: false,
       prefix: "caseFrame"
     };
 
@@ -190,8 +192,8 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
         {!activity.case.isNew && AuthClient.isPermissionAuthorized(WorkflowPermission.ViewCaseFlow) &&
           <CaseFlowButton caseActivity={this.state.pack.activity} />}
         <span className="sf-entity-title">{getToString(activity)}</span>
-        <br />
-        <small className="sf-type-nice-name text-muted">{Navigator.getTypeTitle(activity, undefined)}</small>
+        {CaseFramePage.showSubTitle && <br />}
+        {CaseFramePage.showSubTitle && <small className="sf-type-nice-name text-muted">{Navigator.getTypeTitle(activity, undefined)}</small>}
       </h3>
     );
   }
@@ -229,7 +231,7 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
         this.forceUpdate()
       },
       refreshCount: this.state.refreshCount,
-      allowChangeEntity: false,
+      allowExchangeEntity: false,
       prefix: "caseFrame"
     };
 
@@ -263,4 +265,5 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
     );
   }
 }
+
 

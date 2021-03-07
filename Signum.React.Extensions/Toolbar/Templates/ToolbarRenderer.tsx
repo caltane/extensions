@@ -13,10 +13,10 @@ import * as PropTypes from "prop-types";
 import { NavDropdown, Dropdown } from 'react-bootstrap';
 import { Nav, Navbar } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { parseIcon } from '../../Dashboard/Admin/Dashboard';
 import { coalesceIcon } from '@framework/Operations/ContextualOperations';
 import { useAPI, useUpdatedRef, useHistoryListen, useForceUpdate } from '@framework/Hooks'
 import { QueryString } from '@framework/QueryString'
+import { parseIcon } from '../../Basics/Templates/IconTypeahead'
 
 
 function isCompatibleWithUrl(r: ToolbarClient.ToolbarResponse<any>, location: History.Location, query: any): boolean {
@@ -151,7 +151,7 @@ export default function ToolbarRenderer(p: { location?: ToolbarLocation; }): Rea
               <Nav.Link
                 onClick={(e: React.MouseEvent<any>) => config.handleNavigateClick(e, res)}
                 onAuxClick={(e: React.MouseEvent<any>) => config.handleNavigateClick(e, res)} active={res == active}>
-                {config.getIcon(res)}{config.getLabel(res)}
+                {config.getIcon(res)}{res.label}
               </Nav.Link>
             </Nav.Item>
           );
@@ -243,7 +243,7 @@ export default function ToolbarRenderer(p: { location?: ToolbarLocation; }): Rea
               onClick={(e: React.MouseEvent<any>) => config.handleNavigateClick(e, res)}
               onAuxClick={(e: React.MouseEvent<any>) => config.handleNavigateClick(e, res)}
               className={classes("sf-cursor-pointer", menuItemN, res == active && "active")}>
-              {config.getIcon(res)}{config.getLabel(res)}
+              {config.getIcon(res)}{res.label}
             </HeaderOrItem>
           ];
         }

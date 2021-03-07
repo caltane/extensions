@@ -9,6 +9,7 @@ import { RouteComponentProps } from "react-router";
 import "../Dashboard.css"
 import { useAPI } from '@framework/Hooks'
 import { QueryString } from '@framework/QueryString'
+import { translated } from '../../Translation/TranslatedInstanceTools'
 
 
 interface DashboardPageProps extends RouteComponentProps<{ dashboardId: string }> {
@@ -36,14 +37,14 @@ export default function DashboardPage(p: DashboardPageProps) {
           {!Navigator.isReadOnly(DashboardEntity) &&
             <Link className="sf-hide float-right flip mt-3" style={{ textDecoration: "none" }} to={Navigator.navigateRoute(dashboard)}><FontAwesomeIcon icon="edit" />&nbsp;Edit</Link>
           }
-          <h2 className="display-5">{getToString(dashboard)}</h2>
+          <h2 className="display-5">{translated(dashboard, d => d.displayName)}</h2>
         </div>}
 
       {entityKey &&
         <div style={rtl ? { float: "right", textAlign: "right" } : undefined}>
           {!entity ? <h3>{JavascriptMessage.loading.niceToString()}</h3> :
             <h3>
-              {Navigator.isNavigable({ entity: entity, canExecute: {} } as EntityPack<Entity>) ?
+              {Navigator.isViewable({ entity: entity, canExecute: {} } as EntityPack<Entity>) ?
                 <Link className="display-6" to={Navigator.navigateRoute(entity)}>{getToString(entity)}</Link> :
                 <span className="display-6">{getToString(entity)}</span>
               }
@@ -54,7 +55,7 @@ export default function DashboardPage(p: DashboardPageProps) {
         </div>
       }
 
-          {dashboard && (!entityKey || entity) && <DashboardView dashboard={dashboard} entity={entity || undefined} refreshKey={entity?.ticks} />}
+      {dashboard && (!entityKey || entity) && <DashboardView dashboard={dashboard} entity={entity || undefined} refreshKey={entity?.ticks} />}
     </div>
   );
 }

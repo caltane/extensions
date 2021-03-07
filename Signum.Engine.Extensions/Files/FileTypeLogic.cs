@@ -51,7 +51,7 @@ namespace Signum.Engine.Files
     public interface IFileTypeAlgorithm
     {
         bool OnlyImages { get; set; }
-        int? MaxSizeInBytes { get; set; }
+        long? MaxSizeInBytes { get; set; }
         void SaveFile(IFilePath fp);
         void ValidateFile(IFilePath fp);
         void DeleteFiles(IEnumerable<IFilePath> files);
@@ -91,7 +91,7 @@ namespace Signum.Engine.Files
     public abstract class FileTypeAlgorithmBase
     {
         public Action<IFilePath>? OnValidateFile { get; set; }
-        public int? MaxSizeInBytes { get; set; }
+        public long? MaxSizeInBytes { get; set; }
         public virtual bool OnlyImages { get; set; }
 
         public void ValidateFile(IFilePath fp)
@@ -106,7 +106,7 @@ namespace Signum.Engine.Files
             if (MaxSizeInBytes != null)
             {
                 if (fp.BinaryFile!.Length > MaxSizeInBytes)
-                    throw new ApplicationException(FileMessage.File0IsTooBigTheMaximumSizeIs1.NiceToString(fp.FileName, ((long)fp.BinaryFile.Length).ToComputerSize()));
+                    throw new ApplicationException(FileMessage.File0IsTooBigTheMaximumSizeIs1.NiceToString(fp.FileName, MaxSizeInBytes.Value.ToComputerSize()));
             }
 
             OnValidateFile?.Invoke(fp);

@@ -57,6 +57,7 @@ export interface CaseActivityEntity extends Entities.Entity {
   duration: number | null;
   doneBy: Entities.Lite<Authorization.UserEntity> | null;
   doneType: DoneType | null;
+  doneDecision: string | null;
   scriptExecution: ScriptExecutionEmbedded | null;
 }
 
@@ -94,6 +95,8 @@ export module CaseActivityMessage {
   export const ThereAreInprogressActivities = new MessageKey("CaseActivityMessage", "ThereAreInprogressActivities");
   export const ShowHelp = new MessageKey("CaseActivityMessage", "ShowHelp");
   export const HideHelp = new MessageKey("CaseActivityMessage", "HideHelp");
+  export const CanceledCase = new MessageKey("CaseActivityMessage", "CanceledCase");
+  export const AlreadyFinished = new MessageKey("CaseActivityMessage", "AlreadyFinished");
 }
 
 export const CaseActivityMixin = new Type<CaseActivityMixin>("CaseActivityMixin");
@@ -108,8 +111,6 @@ export module CaseActivityOperation {
   export const Register : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Register");
   export const Delete : Entities.DeleteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Delete");
   export const Next : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Next");
-  export const Approve : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Approve");
-  export const Decline : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Decline");
   export const Jump : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Jump");
   export const Timer : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.Timer");
   export const MarkAsUnread : Entities.ExecuteSymbol<CaseActivityEntity> = registerSymbol("Operation", "CaseActivityOperation.MarkAsUnread");
@@ -181,6 +182,7 @@ export type CaseNotificationState =
 
 export module CaseOperation {
   export const SetTags : Entities.ExecuteSymbol<CaseEntity> = registerSymbol("Operation", "CaseOperation.SetTags");
+  export const Cancel : Entities.ExecuteSymbol<CaseEntity> = registerSymbol("Operation", "CaseOperation.Cancel");
 }
 
 export const CaseTagEntity = new Type<CaseTagEntity>("CaseTag");
@@ -213,8 +215,7 @@ export module CaseTagTypeOperation {
 export const ConnectionType = new EnumType<ConnectionType>("ConnectionType");
 export type ConnectionType =
   "Normal" |
-  "Approve" |
-  "Decline" |
+  "Decision" |
   "Jump" |
   "ScriptException";
 
@@ -225,11 +226,16 @@ export type DateFilterRange =
   "LastMonth" |
   "CurrentYear";
 
+export const DecisionOptionEmbedded = new Type<DecisionOptionEmbedded>("DecisionOptionEmbedded");
+export interface DecisionOptionEmbedded extends Entities.EmbeddedEntity {
+  Type: "DecisionOptionEmbedded";
+  name: string;
+  style: Signum.BootstrapStyle;
+}
+
 export const DoneType = new EnumType<DoneType>("DoneType");
 export type DoneType =
   "Next" |
-  "Approve" |
-  "Decline" |
   "Jump" |
   "Timeout" |
   "ScriptSuccess" |
@@ -335,6 +341,7 @@ export interface WorkflowActivityEntity extends Entities.Entity, IWorkflowNodeEn
   type: WorkflowActivityType;
   comments: string | null;
   requiresOpen: boolean;
+  decisionOptions: Entities.MList<DecisionOptionEmbedded>;
   boundaryTimers: Entities.MList<WorkflowEventEntity>;
   estimatedDuration: number | null;
   viewName: string | null;
@@ -355,6 +362,8 @@ export module WorkflowActivityMessage {
   export const InprogressWorkflowActivities = new MessageKey("WorkflowActivityMessage", "InprogressWorkflowActivities");
   export const OpenCaseActivityStats = new MessageKey("WorkflowActivityMessage", "OpenCaseActivityStats");
   export const LocateWorkflowActivityInDiagram = new MessageKey("WorkflowActivityMessage", "LocateWorkflowActivityInDiagram");
+  export const Approve = new MessageKey("WorkflowActivityMessage", "Approve");
+  export const Decline = new MessageKey("WorkflowActivityMessage", "Decline");
 }
 
 export const WorkflowActivityModel = new Type<WorkflowActivityModel>("WorkflowActivityModel");
@@ -366,6 +375,7 @@ export interface WorkflowActivityModel extends Entities.ModelEntity {
   name: string;
   type: WorkflowActivityType;
   requiresOpen: boolean;
+  decisionOptions: Entities.MList<DecisionOptionEmbedded>;
   boundaryTimers: Entities.MList<WorkflowEventModel>;
   estimatedDuration: number | null;
   script: WorkflowScriptPartEmbedded | null;
@@ -432,6 +442,7 @@ export interface WorkflowConnectionEntity extends Entities.Entity, IWorkflowObje
   from: IWorkflowNodeEntity;
   to: IWorkflowNodeEntity;
   name: string | null;
+  decisionOptionName: string | null;
   bpmnElementId: string;
   type: ConnectionType;
   condition: Entities.Lite<WorkflowConditionEntity> | null;
@@ -445,12 +456,14 @@ export interface WorkflowConnectionModel extends Entities.ModelEntity {
   Type: "WorkflowConnectionModel";
   mainEntityType: Basics.TypeEntity;
   name: string | null;
+  decisionOptionName: string | null;
   needCondition: boolean;
   needOrder: boolean;
   type: ConnectionType;
   condition: Entities.Lite<WorkflowConditionEntity> | null;
   action: Entities.Lite<WorkflowActionEntity> | null;
   order: number | null;
+  decisionOptions: Entities.MList<DecisionOptionEmbedded>;
 }
 
 export module WorkflowConnectionOperation {
@@ -809,6 +822,8 @@ export module WorkflowValidationMessage {
   export const ParallelSplit0ShouldHaveAtLeastOneConnection = new MessageKey("WorkflowValidationMessage", "ParallelSplit0ShouldHaveAtLeastOneConnection");
   export const ParallelSplit0ShouldHaveOnlyNormalConnectionsWithoutConditions = new MessageKey("WorkflowValidationMessage", "ParallelSplit0ShouldHaveOnlyNormalConnectionsWithoutConditions");
   export const Join0OfType1DoesNotMatchWithItsPairTheSplit2OfType3 = new MessageKey("WorkflowValidationMessage", "Join0OfType1DoesNotMatchWithItsPairTheSplit2OfType3");
+  export const DecisionOption0IsDeclaredButNeverUsedInAConnection = new MessageKey("WorkflowValidationMessage", "DecisionOption0IsDeclaredButNeverUsedInAConnection");
+  export const DecisionOptionName0IsNotDeclaredInAnyActivity = new MessageKey("WorkflowValidationMessage", "DecisionOptionName0IsNotDeclaredInAnyActivity");
 }
 
 export const WorkflowXmlEmbedded = new Type<WorkflowXmlEmbedded>("WorkflowXmlEmbedded");

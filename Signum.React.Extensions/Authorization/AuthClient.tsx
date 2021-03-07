@@ -17,12 +17,12 @@ export function startPublic(options: { routes: JSX.Element[], userTicket: boolea
 
   if (Options.userTicket) {
     if (!authenticators.contains(loginFromCookie))
-      throw new Error("call AuthClient.registerUserTicketAuthenticator in Main.tsx before AuthClient.autoLogin");
+      throw new Error("call AuthClient.registerUserTicketAuthenticator in MainPublic.tsx before AuthClient.autoLogin");
   }
 
   if (Options.windowsAuthentication) {
     if (!authenticators.contains(loginWindowsAuthentication))
-      throw new Error("call AuthClient.registerWindowsAuthenticator in Main.tsx before AuthClient.autoLogin");
+      throw new Error("call AuthClient.registerWindowsAuthenticator in MainPublic.tsx before AuthClient.autoLogin");
 
     LoginPage.customLoginButtons = () => <LoginWithWindowsButton />;
   }
@@ -73,12 +73,10 @@ var notifyLogout: boolean;
 
 export const authenticators: Array<() => Promise<AuthenticatedUser | undefined>> = [];
 
-const cookieName = "sfUser";
 
 export function loginFromCookie(): Promise<AuthenticatedUser | undefined> {
 
-
-  var myCookie = Cookies.get(cookieName);
+  var myCookie = Options.getCookie();
 
   if (!myCookie) {
     return Promise.resolve(undefined);
@@ -89,7 +87,7 @@ export function loginFromCookie(): Promise<AuthenticatedUser | undefined> {
       console.log("loginFromCookie");
     }
     else {
-      Cookies.remove(cookieName);
+      Options.removeCookie();
     }
     return au;
   });
@@ -132,7 +130,7 @@ export function logout() {
   if (user == null)
     return;
 
-  Cookies.remove(cookieName)
+  Options.removeCookie()
 
   API.logout().then(() => {
     logoutInternal();
@@ -264,12 +262,16 @@ export function logoutOtherTabs(user: UserEntity) {
 
 
 export namespace Options {
+
+  export function getCookie(): string | null { return Cookies.get("sfUser"); }
+  export function removeCookie() { return Cookies.remove("sfUser"); }
+
   export let onLogout: () => void = () => {
-    throw new Error("onLogout should be defined (check Main.tsx in Southwind)");
+    throw new Error("onLogout should be defined (check MainPublic.tsx in Southwind)");
   }
 
   export let onLogin: (url?: string) => void = (url?: string) => {
-    throw new Error("onLogin should be defined (check Main.tsx in Southwind)");
+    throw new Error("onLogin should be defined (check MainPublic.tsx in Southwind)");
   }
 
   export let disableWindowsAuthentication: boolean;

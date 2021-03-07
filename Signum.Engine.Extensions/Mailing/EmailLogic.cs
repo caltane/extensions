@@ -20,6 +20,7 @@ using Signum.Entities.Basics;
 using System.Text;
 using System.Threading;
 using Microsoft.Exchange.WebServices.Data;
+using Signum.Entities.Files;
 
 namespace Signum.Engine.Mailing
 {
@@ -130,6 +131,16 @@ namespace Signum.Engine.Mailing
             }
 
             return new HashSet<Type>();
+        }
+
+        public static EmailMessageEntity WithAttachment(this EmailMessageEntity email, FilePathEmbedded filePath, string? contentId = null)
+        {
+            email.Attachments.Add(new EmailAttachmentEmbedded
+            {
+                ContentId = contentId ?? Guid.NewGuid().ToString(),
+                File = filePath,
+            });
+            return email;
         }
 
         public static void SendMail(this IEmailModel model)
@@ -281,9 +292,6 @@ namespace Signum.Engine.Mailing
                         if (et.Model != null && EmailModelLogic.RequiresExtraParameters(et.Model))
                             return EmailMessageMessage._01requiresExtraParameters.NiceToString(typeof(EmailModelEntity).NiceName(), et.Model);
 
-                        if (et.SendDifferentMessages)
-                            return ValidationMessage._0IsSet.NiceToString(ReflectionTools.GetPropertyInfo(() => et.SendDifferentMessages).NiceName());
-
                         return null;
                     },
                     Construct = (et, args) =>
@@ -333,21 +341,26 @@ namespace Signum.Engine.Mailing
                     Execute = (m, _) => EmailLogic.SenderManager.Send(m)
                 }.Register();
 
+
                 new ConstructFrom<EmailMessageEntity>(EmailMessageOperation.ReSend)
                 {
                     ToStates = { EmailMessageState.Created },
-                    Construct = (m, _) => new EmailMessageEntity
+                    Construct = (m, _) =>
                     {
-                        From = m.From!.Clone(),
-                        Recipients = m.Recipients.Select(r => r.Clone()).ToMList(),
-                        Target = m.Target,
-                        Subject = m.Subject,
-                        Body = new BigStringEmbedded(m.Body.Text),
-                        IsBodyHtml = m.IsBodyHtml,
-                        Template = m.Template,
-                        EditableMessage = m.EditableMessage,
-                        State = EmailMessageState.Created,
-                        Attachments = m.Attachments.Select(a => a.Clone()).ToMList()
+                       
+                        return new EmailMessageEntity
+                        {
+                            From = m.From!.Clone(),
+                            Recipients = m.Recipients.Select(r => r.Clone()).ToMList(),
+                            Target = m.Target,
+                            Subject = m.Subject,
+                            Body = new BigStringEmbedded(m.Body.Text),
+                            IsBodyHtml = m.IsBodyHtml,
+                            Template = m.Template,
+                            EditableMessage = m.EditableMessage,
+                            State = EmailMessageState.Created,
+                            Attachments = m.Attachments.Select(a => a.Clone()).ToMList()
+                        };
                     }
                 }.Register();
 
@@ -363,7 +376,7 @@ namespace Signum.Engine.Mailing
     {
         private Func<EmailTemplateEntity?, Lite<Entity>?, EmailMessageEntity?, EmailSenderConfigurationEntity> getEmailSenderConfiguration;
 
-        public EmailSenderManager(Func<EmailTemplateEntity?, Lite<Entity>?,EmailMessageEntity?, EmailSenderConfigurationEntity> getEmailSenderConfiguration)
+        public EmailSenderManager(Func<EmailTemplateEntity?, Lite<Entity>?, EmailMessageEntity?, EmailSenderConfigurationEntity> getEmailSenderConfiguration)
         {
             this.getEmailSenderConfiguration = getEmailSenderConfiguration;
         }

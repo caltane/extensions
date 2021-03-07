@@ -184,7 +184,7 @@ export function handleMenuClick(et: Lite<EmailTemplateEntity>, ctx: ContextualIt
 export function createAndViewEmail(template: Lite<EmailTemplateEntity>, ...args: any[]) {
 
   Operations.API.constructFromLite(template, EmailMessageOperation.CreateEmailFromTemplate, ...args)
-    .then(pack => pack && Navigator.navigate(pack))
+    .then(pack => pack && Navigator.view(pack))
     .done();
 }
 
@@ -229,6 +229,7 @@ export module API {
 export interface AsyncEmailSenderState {
   asyncSenderPeriod: number;
   running: boolean;
+  machineName: string;
   isCancelationRequested: boolean;
   nextPlannedExecution: string;
   queuedItems: number;

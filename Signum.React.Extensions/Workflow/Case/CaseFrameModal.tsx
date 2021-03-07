@@ -6,7 +6,7 @@ import { TypeInfo, getTypeInfo, GraphExplorer, PropertyRoute, ReadonlyBinding, }
 import * as AppContext from '@framework/AppContext'
 import * as Navigator from '@framework/Navigator'
 import MessageModal from '@framework/Modals/MessageModal'
-import { Lite, JavascriptMessage, NormalWindowMessage, entityInfo, getToString, toLite, EntityPack, ModifiableEntity } from '@framework/Signum.Entities'
+import { Lite, JavascriptMessage, NormalWindowMessage, entityInfo, getToString, toLite, EntityPack, ModifiableEntity, SaveChangesMessage } from '@framework/Signum.Entities'
 import { renderWidgets, WidgetContext } from '@framework/Frames/Widgets'
 import { ValidationErrors, ValidationErrorsHandle } from '@framework/Frames/ValidationErrors'
 import { ButtonBar, ButtonBarHandle } from '@framework/Frames/ButtonBar'
@@ -30,7 +30,6 @@ interface CaseFrameModalProps extends React.Props<CaseFrameModal>, IModalProps<C
   entityOrPack: Lite<CaseActivityEntity> | CaseActivityEntity | WorkflowClient.CaseEntityPack;
   avoidPromptLooseChange?: boolean;
   readOnly?: boolean;
-  isNavigate?: boolean;
 }
 
 interface CaseFrameModalState {
@@ -89,25 +88,6 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
       .then(c => this.setState({ getComponent: c }));
   }
 
-  handleCloseClicked = () => {
-
-    if (this.hasChanges() && !this.props.avoidPromptLooseChange) {
-      MessageModal.show({
-        title: NormalWindowMessage.ThereAreChanges.niceToString(),
-        message: NormalWindowMessage.LoseChanges.niceToString(),
-        buttons: "yes_no",
-        icon: "warning",
-        style: "warning"
-      }).then(result => {
-        if (result != "yes")
-          return;
-
-        this.setState({ show: false });
-      }).done();
-    }
-    else
-      this.setState({ show: false });
-  }
 
   hasChanges() {
 
@@ -119,11 +99,11 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
   }
 
   okClicked: boolean = false;
-  handleCancelClicked = () => {
+  handleCloseClicked = () => {
     if (this.hasChanges() && !this.props.avoidPromptLooseChange) {
       MessageModal.show({
-        title: NormalWindowMessage.ThereAreChanges.niceToString(),
-        message: NormalWindowMessage.LoseChanges.niceToString(),
+        title: SaveChangesMessage.ThereAreChanges.niceToString(),
+        message: JavascriptMessage.loseCurrentChanges.niceToString(),
         buttons: "yes_no",
         style: "warning",
         icon: "warning"
@@ -132,21 +112,6 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
           this.setState({ show: false });
       }).done();
     } else {
-      this.setState({ show: false });
-    }
-  }
-
-  handleOkClicked = () => {
-    if (this.hasChanges()) {
-      MessageModal.show({
-        title: NormalWindowMessage.ThereAreChanges.niceToString(),
-        message: JavascriptMessage.saveChangesBeforeOrPressCancel.niceToString(),
-        buttons: "ok",
-        style: "warning",
-        icon: "warning"
-      }).done();
-    } else {
-      this.okClicked = true;
       this.setState({ show: false });
     }
   }
@@ -164,12 +129,9 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
     var pack = this.state.pack;
 
     return (
-      <Modal size="lg" show={this.state.show} onExited={this.handleOnExited} onHide={this.handleCancelClicked} className="sf-popup-control" >
+      <Modal size="lg" show={this.state.show} onExited={this.handleOnExited} onHide={this.handleCloseClicked} className="sf-popup-control" >
         <ModalHeaderButtons htmlAttributes={{ style: { display: "block" } }} closeBeforeTitle={true}
-          onClose={this.props.isNavigate ? this.handleCancelClicked : undefined}
-          onOk={!this.props.isNavigate ? this.handleOkClicked : undefined}
-          onCancel={!this.props.isNavigate ? this.handleCancelClicked : undefined}
-          okDisabled={!pack}>
+          onClose={this.handleCloseClicked}>
           {this.renderTitle()}
         </ModalHeaderButtons>
         {pack && this.renderBody()}
@@ -213,7 +175,7 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
         this.forceUpdate();
       },
       refreshCount: this.state.refreshCount,
-      allowChangeEntity: false,
+      allowExchangeEntity: false,
       prefix: this.prefix
     };
 
@@ -266,7 +228,7 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
         this.forceUpdate()
       },
       refreshCount: this.state.refreshCount,
-      allowChangeEntity: false,
+      allowExchangeEntity: false,
       prefix: this.prefix
     };
 
@@ -325,7 +287,7 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
 
     const ti = getTypeInfo(entity.Type);
 
-    if (!Navigator.isNavigable(ti)) //Embedded
+    if (!Navigator.isViewable(ti, { buttons: "close" })) //Embedded
       return null;
 
     return (
@@ -339,23 +301,12 @@ export default class CaseFrameModal extends React.Component<CaseFrameModalProps,
     AppContext.pushOrOpenInTab("~/workflow/activity/" + this.state.pack!.activity.id, e);
   }
 
-  static openView(entityOrPack: Lite<CaseActivityEntity> | CaseActivityEntity | WorkflowClient.CaseEntityPack, readOnly?: boolean): Promise<CaseActivityEntity | undefined> {
+  static openView(entityOrPack: Lite<CaseActivityEntity> | CaseActivityEntity | WorkflowClient.CaseEntityPack, options?: Navigator.ViewOptions): Promise<CaseActivityEntity | undefined> {
 
     return openModal<CaseActivityEntity>(<CaseFrameModal
       entityOrPack={entityOrPack}
-      readOnly={readOnly || false}
-      isNavigate={false}
+      readOnly={options?.readOnly ?? false}
     />);
-  }
-
-
-  static openNavigate(entityOrPack: Lite<CaseActivityEntity> | CaseActivityEntity | WorkflowClient.CaseEntityPack, readOnly?: boolean): Promise<void> {
-
-    return openModal<void>(<CaseFrameModal
-      entityOrPack={entityOrPack}
-      readOnly={readOnly || false}
-      isNavigate={true}
-    />) as Promise<void>;
   }
 }
 
