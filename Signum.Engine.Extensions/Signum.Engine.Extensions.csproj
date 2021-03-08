@@ -8,6 +8,10 @@
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <NoWarn>1701;1702;8600</NoWarn>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="Chart\Icons\*.png" />
 		<None Remove="Excel\plainExcelTemplate.xlsx" />
