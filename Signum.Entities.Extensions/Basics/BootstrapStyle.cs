@@ -17,5 +17,6 @@ namespace Signum.Entities.Basics
         Info,
         Warning,
         Danger,
+        CustomColor
     }
 }

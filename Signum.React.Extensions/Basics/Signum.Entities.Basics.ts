@@ -15,7 +15,8 @@ export type BootstrapStyle =
   "Success" |
   "Info" |
   "Warning" |
-  "Danger";
+  "Danger" |
+  "CustomColor";
 
 export const CultureInfoEntity = new Type<CultureInfoEntity>("CultureInfo");
 export interface CultureInfoEntity extends Entities.Entity {

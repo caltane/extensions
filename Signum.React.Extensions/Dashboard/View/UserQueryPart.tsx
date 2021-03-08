@@ -74,9 +74,7 @@ function SearchContolInPart({ findOptions, part }: { findOptions: FindOptions, p
 interface BigValueBadgeProps {
   findOptions: FindOptions;
   text?: string;
-  style: PanelStyle;
   style: BootstrapStyle;
-  style: PanelStyle;
   customColor: string | null;
   iconName?: string;
   iconColor?: string;
