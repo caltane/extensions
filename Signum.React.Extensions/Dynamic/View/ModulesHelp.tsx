@@ -38,7 +38,7 @@ modules.Navigator.API.fetchAndRemember([lite]).then(entity => { /* do something 
 `;
   modules["Finder"] = `modules.Finder.find("${p.cleanName}");
 modules.Finder.findMany("${p.cleanName}");
-modules.Finder.fetchEntitiesWithFilters("${p.cleanName}", 
+modules.Finder.fetchEntitiesLiteWithFilters("${p.cleanName}", 
   [{ token: "...", operation: "...", value: "..." }] ,  /* filterOptions */ 
   [{ token: "...", orderType: "..." }],  /* orderOptions */
   1 /* count */);
