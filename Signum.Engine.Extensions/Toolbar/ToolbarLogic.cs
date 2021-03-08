@@ -277,6 +277,7 @@ namespace Signum.Engine.Toolbar
                 iconColor = element.IconColor,
                 autoRefreshPeriod = element.AutoRefreshPeriod,
                 openInPopup = element.OpenInPopup,
+                countQuery = element.CountQuery
             };
 
             if (element.Content is Lite<ToolbarMenuEntity>)
@@ -354,6 +355,7 @@ namespace Signum.Engine.Toolbar
         public List<ToolbarResponse>? elements;
         public string? iconName;
         public string? iconColor;
+        public UserQueryEntity? countQuery;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? autoRefreshPeriod;

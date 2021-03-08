@@ -100,8 +100,21 @@ export interface PanelPartEmbedded extends Entities.EmbeddedEntity {
   startColumn: number;
   columns: number;
   style: Signum.BootstrapStyle;
+  customColor: string | null;
   content: IPartEntity;
 }
+
+export const PanelStyle = new EnumType<PanelStyle>("PanelStyle");
+export type PanelStyle =
+  "Light" |
+  "Dark" |
+  "Primary" |
+  "Secondary" |
+  "Success" |
+  "Info" |
+  "Warning" |
+  "Danger" |
+  "CustomColor";
 
 export const UserChartPartEntity = new Type<UserChartPartEntity>("UserChartPart");
 export interface UserChartPartEntity extends Entities.Entity, IPartEntity {

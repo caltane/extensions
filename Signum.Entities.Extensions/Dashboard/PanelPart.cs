@@ -36,6 +36,8 @@ namespace Signum.Entities.Dashboard
 
         public BootstrapStyle Style { get; set; }
 
+        public string? CustomColor { get; set; }
+
         [ImplementedBy(
             typeof(UserChartPartEntity),
             typeof(CombinedUserChartPartEntity),
@@ -113,7 +115,18 @@ namespace Signum.Entities.Dashboard
         }
     }
 
-
+    public enum PanelStyle
+    {
+        Light,
+        Dark,
+        Primary,
+        Secondary,
+        Success,
+        Info,
+        Warning,
+        Danger,
+        CustomColor
+    }
 
     public interface IGridEntity
     {

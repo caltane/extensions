@@ -77,10 +77,6 @@ namespace Signum.Engine.Authorization
                         e.Executed = true;
                         var user = e.User;
 
-                        var error = UserEntity.OnValidatePassword(password);
-                        if (error != null)
-                            throw new ApplicationException(error);
-
                         user.PasswordHash = Security.EncodePassword(password);
                         using (AuthLogic.Disable())
                             user.Execute(UserOperation.Save);
@@ -97,11 +93,11 @@ namespace Signum.Engine.Authorization
             {
 
                 var user = Database.Query<ResetPasswordRequestEntity>().Where(el => el.Code == code).Select(el => el.User).Single();
-                
+
                 //Checking the last request if have 24h between the new request
-                if (Database.Query<ResetPasswordRequestEntity>()
-                     .Any(r => r.User.Is(user) && r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Executed))
-                    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());
+                //if (Database.Query<ResetPasswordRequestEntity>()
+                //     .Any(r => r.User.Is(user) && r.RequestDate > DateTime.Now.AddHours(-24) && r.Code != code && r.Executed))
+                //    throw new InvalidOperationException(AuthEmailMessage.NotHave24HoursBetweenRequests.NiceToString());
 
                 //Remove old previous requests
                 var rpr = Database.Query<ResetPasswordRequestEntity>()
@@ -159,9 +155,6 @@ namespace Signum.Engine.Authorization
             UserEntity? user;
             using (AuthLogic.Disable())
             {
-                user = Database.Query<UserEntity>()
-                  .Where(u => u.Email == email && u.State != UserState.Disabled)
-                .SingleOrDefault();
                 if (ValidateEmail != null)
                 {
                     user = ValidateEmail(email)!;
@@ -172,9 +165,6 @@ namespace Signum.Engine.Authorization
                       .Where(u => u.Email == email && u.State != UserState.Disabled)
                     .SingleOrDefault();
                 }
-                user = Database.Query<UserEntity>()
-                  .Where(u => u.Email == email && u.State != UserState.Disabled)
-                  .SingleOrDefault();
 
                 if (user == null)
                     throw new ApplicationException(AuthEmailMessage.EmailNotFound.NiceToString());
@@ -184,10 +174,10 @@ namespace Signum.Engine.Authorization
             {
                 var request = ResetPasswordRequest(user);
 
-                string url = EmailLogic.Configuration.UrlLeft + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
+                string url = EmailLogic.GetLeftUrl(user) + @"/auth/ResetPassword?code={0}".FormatWith(request.Code);
 
                 using (AuthLogic.Disable())
-                    new ResetPasswordRequestEmail(request, url, null!).SendMail();
+                    new ResetPasswordRequestEmail(request, url, email.Trim()).SendMail();
 
                 return request;
             }
@@ -202,8 +192,9 @@ namespace Signum.Engine.Authorization
         public static bool CheckCode(string code)
         {
             {
-                return Database.Query<ResetPasswordRequestEntity>()
-                    .Any(r => r.Code == code && !r.Lapsed && !r.Executed);
+                using (AuthLogic.Disable())
+                    return Database.Query<ResetPasswordRequestEntity>()
+                        .Any(r => r.Code == code && !r.Lapsed && !r.Executed);
             }
         }
 

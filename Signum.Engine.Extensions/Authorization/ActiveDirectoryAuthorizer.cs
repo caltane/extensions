@@ -198,5 +198,10 @@ namespace Signum.Engine.Authorization
 
             }
         }
+
+        public bool IsTheFirstTime(string user)
+        {
+            return false;
+        }
     }
 }

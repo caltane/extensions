@@ -31,12 +31,15 @@ namespace Signum.React.Authorization
             string authenticationType;
             // Attempt to login
             UserEntity user;
+            bool needChangePassword = false;
             try
             {
                 if (AuthLogic.Authorizer == null)
                     user = AuthLogic.Login(data.userName, Security.EncodePassword(data.password), out authenticationType);
                 else
-                    user = AuthLogic.Authorizer.Login(data.userName, data.password, out authenticationType);
+                {
+                    user = AuthLogic.Authorizer.Login(data.userName, data.password, out authenticationType);                        
+                }
             }
             catch (Exception e) when (e is IncorrectUsernameException || e is IncorrectPasswordException)
             {
@@ -56,6 +59,13 @@ namespace Signum.React.Authorization
             }
             catch (Exception e)
             {
+                if (AuthLogic.Authorizer != null)
+                {
+                    needChangePassword = AuthLogic.Authorizer.IsTheFirstTime(data.userName);
+                    if (needChangePassword)
+                        return ModelError("needPasswordChange", LoginAuthMessage.YourPasswordNeedAChange.NiceToString());
+                }
+
                 return ModelError("login", e.Message);
             }
 
@@ -70,7 +80,7 @@ namespace Signum.React.Authorization
 
             var token = AuthTokenServer.CreateToken(user);
 
-            return new LoginResponse { userEntity = user, token = token, authenticationType = authenticationType };
+            return new LoginResponse { userEntity = user, token = token, authenticationType = authenticationType, isFirstTime = needChangePassword };
         }
 
         [HttpGet("api/auth/loginFromApiKey")]
@@ -196,10 +206,6 @@ namespace Signum.React.Authorization
         {
             if (string.IsNullOrEmpty(request.newPassword) && string.IsNullOrEmpty(request.code))
                 return ModelError("newPassword", LoginAuthMessage.PasswordMustHaveAValue.NiceToString());
-
-            var error = UserEntity.OnValidatePassword(request.newPassword);
-            if (error != null)
-                return ModelError("newPassword", error);
             
              var rpr = ResetPasswordRequestLogic.ResetPasswordRequestExecute(request.subCode, request.code, request.newPassword);
 
@@ -226,6 +232,7 @@ namespace Signum.React.Authorization
             public string token { get; set; }
             public UserEntity userEntity { get; set; }
             public string message { get; set; }
+            public bool isFirstTime { get; set; }
         }
 
         public class ChangePasswordRequest

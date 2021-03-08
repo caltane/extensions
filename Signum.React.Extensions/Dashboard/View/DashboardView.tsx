@@ -211,7 +211,9 @@ export function PanelPart(p: PanelPartProps) {
       <div className={classes("card-header", "sf-show-hover",
         style && style != "light" && "text-white",
         style && ("bg-" + style)
-      )}>
+      )}
+        style={{ backgroundColor: part.customColor ?? undefined }}
+      >
         {renderer.handleEditClick &&
           <a className="sf-pointer float-right flip sf-hide" onMouseUp={e => renderer.handleEditClick!(content, lite, e)}>
             <FontAwesomeIcon icon="edit" />&nbsp;Edit

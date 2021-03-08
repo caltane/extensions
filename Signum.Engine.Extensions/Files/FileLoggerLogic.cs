@@ -64,5 +64,25 @@ namespace Signum.Engine.Files
             }
         }
 
+        public static void OnLogger(string fileName, string fullFisicalPath, FileTypeSymbol fileType, string algorithmType, FileLoggerActionType action, bool ignoreTrack = false)
+        {
+            var user = UserEntity.Current;
+            if (FileLoggerLogic.RoleTracked(user.Role) || ignoreTrack)
+            {
+                using (AuthLogic.Disable())
+                {
+                    (new FileLoggerEntity
+                    {
+                        FileName = fileName,
+                        FullPhysicalPath = fullFisicalPath,
+                        FileType = fileType,
+                        User = user.ToLite(),
+                        Action = action,
+                        AlgorithmType = algorithmType,
+                        Date = TimeZoneManager.Now,
+                    }).Save();
+                }
+            }
+        }
     }
 }
