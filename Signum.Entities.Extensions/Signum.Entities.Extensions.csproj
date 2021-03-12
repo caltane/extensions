@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <NoWarn>8618;8600</NoWarn>
+    <NoWarn>8618;CS8600</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>
